@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FC Wallet UI Concept</title>
+    <style>
+      :root {
+        --bg: #08111d;
+        --panel: rgba(9, 22, 37, 0.88);
+        --panel-soft: rgba(13, 31, 49, 0.78);
+        --line: rgba(108, 199, 231, 0.28);
+        --line-strong: rgba(110, 225, 248, 0.6);
+        --cyan: #79e1f4;
+        --cyan-strong: #b4f5ff;
+        --gold: #d4bb73;
+        --gold-soft: rgba(212, 187, 115, 0.16);
+        --text: #edf7ff;
+        --muted: #8fb0c3;
+        --success: #8adfb4;
+        --warning: #f1d084;
+        --danger: #f48e96;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+        --heading-font: "Iowan Old Style", "Baskerville", "Times New Roman",
+          "Songti SC", serif;
+        --body-font: "Avenir Next", "PingFang SC", "Hiragino Sans GB",
+          "Helvetica Neue", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(99, 184, 223, 0.18), transparent 24%),
+          radial-gradient(circle at 85% 14%, rgba(212, 187, 115, 0.14), transparent 22%),
+          linear-gradient(180deg, #132538 0%, #09121d 58%, #060d16 100%);
+        color: var(--text);
+        font-family: var(--body-font);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(137, 211, 232, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(137, 211, 232, 0.06) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.88), transparent);
+      }
+
+      .page {
+        width: min(1520px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 44px 0 64px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .hero-card,
+      .note-card {
+        position: relative;
+        padding: 28px 30px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(10, 24, 39, 0.82), rgba(7, 18, 30, 0.96));
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .hero-card::after,
+      .note-card::after,
+      .phone::after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border: 1px solid rgba(121, 225, 244, 0.12);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 14px;
+        border: 1px solid rgba(212, 187, 115, 0.32);
+        background: rgba(212, 187, 115, 0.08);
+        color: var(--gold);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        font-family: var(--heading-font);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(42px, 4vw, 66px);
+        line-height: 1.04;
+      }
+
+      .hero-copy p,
+      .note-card p,
+      .screen-copy,
+      .small-note,
+      .metric-label,
+      .stack-item p,
+      .list-label,
+      .mini-copy {
+        color: var(--muted);
+      }
+
+      .hero-copy p {
+        max-width: 760px;
+        margin: 18px 0 0;
+        font-size: 16px;
+        line-height: 1.75;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .chip {
+        padding: 10px 14px;
+        border: 1px solid rgba(121, 225, 244, 0.26);
+        background: rgba(121, 225, 244, 0.08);
+        color: var(--cyan-strong);
+        font-size: 13px;
+      }
+
+      .note-card h2 {
+        margin-top: 14px;
+        font-size: 26px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .stack-item {
+        padding: 16px 16px 16px 18px;
+        border-left: 3px solid var(--cyan);
+        background: rgba(10, 22, 38, 0.72);
+      }
+
+      .stack-item strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 15px;
+      }
+
+      .tokens {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .token-card {
+        padding: 18px;
+        border: 1px solid var(--line);
+        background: rgba(7, 17, 27, 0.62);
+      }
+
+      .swatch {
+        height: 70px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .swatch.navy {
+        background: linear-gradient(135deg, #12283e, #07111d);
+      }
+
+      .swatch.cyan {
+        background: linear-gradient(135deg, rgba(121, 225, 244, 0.95), rgba(121, 225, 244, 0.35));
+      }
+
+      .swatch.gold {
+        background: linear-gradient(135deg, rgba(212, 187, 115, 0.98), rgba(212, 187, 115, 0.42));
+      }
+
+      .swatch.glass {
+        background: linear-gradient(180deg, rgba(13, 31, 49, 0.95), rgba(9, 22, 37, 0.4));
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 24px;
+        margin-top: 52px;
+        margin-bottom: 20px;
+      }
+
+      .section-head h2 {
+        font-size: 34px;
+      }
+
+      .section-head p {
+        max-width: 620px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .screen-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(320px, 1fr));
+        gap: 28px;
+      }
+
+      .screen-unit {
+        display: grid;
+        gap: 14px;
+      }
+
+      .screen-meta h3 {
+        font-size: 26px;
+      }
+
+      .screen-meta p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .phone {
+        position: relative;
+        min-height: 816px;
+        padding: 18px;
+        border-radius: 34px;
+        border: 1px solid rgba(121, 225, 244, 0.2);
+        background:
+          radial-gradient(circle at 75% 10%, rgba(212, 187, 115, 0.18), transparent 22%),
+          linear-gradient(180deg, rgba(15, 34, 55, 0.94), rgba(7, 18, 30, 0.98));
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(137, 211, 232, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(137, 211, 232, 0.04) 1px, transparent 1px);
+        background-size: 32px 32px;
+        opacity: 0.72;
+        pointer-events: none;
+      }
+
+      .phone-shell {
+        position: relative;
+        z-index: 1;
+      }
+
+      .statusbar,
+      .screen-top,
+      .nav-item,
+      .small-chip,
+      .metric,
+      .action,
+      .request-item,
+      .balance-card,
+      .vault-item,
+      .sheet,
+      .organization-card,
+      .message-item,
+      .security-card {
+        border: 1px solid rgba(121, 225, 244, 0.16);
+        background: rgba(6, 16, 27, 0.52);
+        backdrop-filter: blur(12px);
+      }
+
+      .statusbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        padding: 8px 12px;
+        border-radius: 18px;
+        color: rgba(237, 247, 255, 0.82);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+      }
+
+      .screen-top {
+        padding: 16px 18px;
+        border-radius: 24px;
+      }
+
+      .screen-top .label {
+        color: var(--cyan);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .screen-top h4 {
+        margin-top: 8px;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      .screen-top p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 13px;
+      }
+
+      .content-stack {
+        display: grid;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .identity-card {
+        padding: 18px;
+        border-radius: 28px;
+        border: 1px solid rgba(212, 187, 115, 0.28);
+        background:
+          linear-gradient(135deg, rgba(18, 39, 61, 0.98), rgba(8, 18, 30, 0.96));
+        box-shadow: inset 0 0 0 1px rgba(212, 187, 115, 0.08);
+      }
+
+      .small-chip {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        color: var(--cyan-strong);
+        font-size: 11px;
+      }
+
+      .identity-card h5,
+      .balance-card h5,
+      .vault-item h5,
+      .sheet h5,
+      .organization-card h5,
+      .message-item h5,
+      .security-card h5,
+      .request-item h5 {
+        margin: 14px 0 8px;
+        font-size: 17px;
+        font-family: var(--heading-font);
+      }
+
+      .identity-id {
+        color: rgba(237, 247, 255, 0.78);
+        font-size: 13px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .metric {
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .metric-value {
+        display: block;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .metric-label {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      .action-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .action {
+        padding: 12px 10px;
+        border-radius: 18px;
+        text-align: center;
+      }
+
+      .action strong {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .action span {
+        display: block;
+        margin-top: 5px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .balance-card,
+      .vault-item,
+      .sheet,
+      .organization-card,
+      .message-item,
+      .security-card,
+      .request-item {
+        padding: 16px;
+        border-radius: 24px;
+      }
+
+      .balance-row,
+      .list-row,
+      .message-row,
+      .security-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .big-value {
+        color: var(--text);
+        font-size: 26px;
+        font-family: var(--heading-font);
+      }
+
+      .sub-value,
+      .list-label,
+      .mini-copy,
+      .request-item p {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+      }
+
+      .pill.gold {
+        background: var(--gold-soft);
+        color: var(--gold);
+      }
+
+      .pill.cyan {
+        background: rgba(121, 225, 244, 0.12);
+        color: var(--cyan-strong);
+      }
+
+      .pill.green {
+        background: rgba(138, 223, 180, 0.14);
+        color: var(--success);
+      }
+
+      .pill.red {
+        background: rgba(244, 142, 150, 0.14);
+        color: var(--danger);
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 16px;
+        padding: 10px;
+        border-radius: 24px;
+        border: 1px solid rgba(121, 225, 244, 0.16);
+        background: rgba(5, 14, 24, 0.78);
+      }
+
+      .nav-item {
+        padding: 10px 8px;
+        border-radius: 16px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .nav-item.active {
+        background: rgba(121, 225, 244, 0.14);
+        color: var(--cyan-strong);
+        box-shadow: inset 0 0 0 1px rgba(121, 225, 244, 0.2);
+      }
+
+      .request-item {
+        display: grid;
+        gap: 8px;
+      }
+
+      .bar {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--cyan), var(--gold));
+      }
+
+      .sheet .amount {
+        margin: 6px 0 10px;
+        font-size: 36px;
+        font-family: var(--heading-font);
+      }
+
+      .cta {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 14px 18px;
+        border: 0;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(112, 222, 246, 0.95), rgba(212, 187, 115, 0.9));
+        color: #06111b;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .security-checklist,
+      .bullet-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .security-checklist span,
+      .bullet-list span {
+        display: block;
+        padding-left: 14px;
+        position: relative;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .security-checklist span::before,
+      .bullet-list span::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 7px;
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--cyan);
+      }
+
+      .footer-note {
+        margin-top: 34px;
+        padding: 18px 22px;
+        border: 1px solid var(--line);
+        background: rgba(8, 20, 31, 0.8);
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      @media (max-width: 1280px) {
+        .hero,
+        .tokens,
+        .screen-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-card hero-copy">
+          <span class="eyebrow">Future Citizen System / UI Concept</span>
+          <h1>FC Wallet<br />主权身份与可信交互移动端界面概念稿</h1>
+          <p>
+            这不是一款传统的加密钱包首页方案，而是一套以身份、信任、治理为中心的数字公民操作界面。整个视觉方向延续
+            Future Citizen 蓝图中的机构感、深海蓝网格、冷光结构线与权威金色节点，同时把链上复杂度隐藏在更平静、更可信的交互框架里。
+          </p>
+          <div class="chip-row">
+            <span class="chip">Identity First</span>
+            <span class="chip">Trust Visible</span>
+            <span class="chip">Stablecoin Native</span>
+            <span class="chip">Citizen + Organization</span>
+            <span class="chip">Private by Design</span>
+          </div>
+        </div>
+
+        <aside class="note-card">
+          <span class="eyebrow">Design Direction</span>
+          <h2>第一版界面重点</h2>
+          <div class="stack">
+            <div class="stack-item">
+              <strong>1. 首页不是余额页</strong>
+              <p>先展示身份、凭证与待处理的可信请求，再展示资产和支付入口。</p>
+            </div>
+            <div class="stack-item">
+              <strong>2. 支付体验接近 Web2</strong>
+              <p>用户默认看到稳定币金额和支付结果，Gas 兑换逻辑藏在回执与详情里。</p>
+            </div>
+            <div class="stack-item">
+              <strong>3. 企业能力是正统模块</strong>
+              <p>组织工作台、多签审批和收益分润不做成附属插件，而是完整入口。</p>
+            </div>
+            <div class="stack-item">
+              <strong>4. 安全与恢复可理解</strong>
+              <p>MPC、安全设备、卡片关系和恢复状态都用用户可理解的方式表达。</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Palette / Tone</span>
+            <h2>视觉语言与设计 Tokens</h2>
+          </div>
+          <p>
+            采用深蓝基础色、青蓝结构高亮、浅金核心节点强调，配合蓝图式网格、层叠卡片与证书感信息容器，形成“数字制度基础设施”的产品气质。
+          </p>
+        </div>
+        <div class="tokens">
+          <div class="token-card">
+            <div class="swatch navy"></div>
+            <h4>Foundation Navy</h4>
+            <p class="small-note">系统背景、主界面空间、结构基底。</p>
+          </div>
+          <div class="token-card">
+            <div class="swatch cyan"></div>
+            <h4>Signal Cyan</h4>
+            <p class="small-note">可验证状态、系统线条、关键交互反馈。</p>
+          </div>
+          <div class="token-card">
+            <div class="swatch gold"></div>
+            <h4>Authority Gold</h4>
+            <p class="small-note">身份锚点、权威节点、重要确认动作。</p>
+          </div>
+          <div class="token-card">
+            <div class="swatch glass"></div>
+            <h4>Institution Glass</h4>
+            <p class="small-note">信息卡片、叠层容器、收纳复杂数据。</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Core Screens</span>
+            <h2>移动端核心界面</h2>
+          </div>
+          <p>
+            这一版先交付 6 个关键屏幕，覆盖产品骨架与主路径：Home、Identity、Pay、Organization、Inbox、Security。它们足够支撑第一轮产品和设计内部对齐。
+          </p>
+        </div>
+
+        <div class="screen-grid">
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Home</h3>
+              <p>首页优先展示身份状态、凭证、可信请求与支付入口，而不是把全部注意力放在价格波动与交易按钮上。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>FC Secure / CN</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">Citizen Mode</div>
+                  <h4>Welcome back, Amelia</h4>
+                  <p>Identity is verified. Two trust actions require your review today.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="identity-card">
+                    <span class="small-chip">Future Citizen Identity</span>
+                    <h5>did:fc:amelia.fc</h5>
+                    <div class="identity-id">Bound to national digital identity and active within the FC trust framework.</div>
+                    <div class="metrics">
+                      <div class="metric">
+                        <span class="metric-value">Bound</span>
+                        <span class="metric-label">Digital ID anchor</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">4 VC</span>
+                        <span class="metric-label">Verified credentials</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">Ready</span>
+                        <span class="metric-label">Recovery state</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="action-grid">
+                    <div class="action">
+                      <strong>Pay</strong>
+                      <span>Stablecoin</span>
+                    </div>
+                    <div class="action">
+                      <strong>Prove</strong>
+                      <span>ZKP flow</span>
+                    </div>
+                    <div class="action">
+                      <strong>Inbox</strong>
+                      <span>2 requests</span>
+                    </div>
+                    <div class="action">
+                      <strong>Switch</strong>
+                      <span>Organization</span>
+                    </div>
+                  </div>
+
+                  <div class="balance-card">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Spendable balance</div>
+                        <div class="big-value">12,480.50 USDT</div>
+                        <div class="sub-value">Auto Gas active / FCC handled in background</div>
+                      </div>
+                      <span class="pill gold">FCC hidden unless needed</span>
+                    </div>
+                  </div>
+
+                  <div class="request-item">
+                    <div class="message-row">
+                      <div>
+                        <h5>Age proof request</h5>
+                        <p>Global Transit requests “Adult Status” only. No birthdate disclosure required.</p>
+                      </div>
+                      <span class="pill cyan">Review</span>
+                    </div>
+                  </div>
+
+                  <div class="request-item">
+                    <div class="message-row">
+                      <div>
+                        <h5>Organization approval</h5>
+                        <p>Future Trade Hub treasury proposal is waiting for your signer response.</p>
+                      </div>
+                      <span class="pill red">1 pending</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item active">Home</div>
+                  <div class="nav-item">Identity</div>
+                  <div class="nav-item">Pay</div>
+                  <div class="nav-item">Org</div>
+                  <div class="nav-item">Inbox</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Identity</h3>
+              <p>身份页是产品的中轴，不只是展示一个地址，而是展示主权身份、命名系统、国家级绑定关系与可证明能力。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>Identity Layer</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">Identity Center</div>
+                  <h4>Future Citizen Profile</h4>
+                  <p>Your identity, legal trust anchor and naming system are managed here.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="identity-card">
+                    <span class="small-chip">FCDID</span>
+                    <h5>amelia.fc</h5>
+                    <div class="identity-id">did:fc:amelia.fc</div>
+                    <div class="metrics">
+                      <div class="metric">
+                        <span class="metric-value">X.509</span>
+                        <span class="metric-label">PKI linked</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">Level A</span>
+                        <span class="metric-label">Trust grade</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">Active</span>
+                        <span class="metric-label">Network status</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="vault-item">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Linked Digital ID</div>
+                        <h5>National Digital ID Bound</h5>
+                        <div class="mini-copy">Used for legal trust anchor, recovery eligibility and sovereign-grade compliance.</div>
+                      </div>
+                      <span class="pill green">Verified</span>
+                    </div>
+                  </div>
+
+                  <div class="vault-item">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Selective disclosure</div>
+                        <h5>Proof capabilities</h5>
+                        <div class="mini-copy">Adult status, nationality class, residency eligibility and institution-ready KYC proofs.</div>
+                      </div>
+                      <span class="pill cyan">4 enabled</span>
+                    </div>
+                  </div>
+
+                  <div class="vault-item">
+                    <div class="list-label">What this identity can do</div>
+                    <div class="bullet-list">
+                      <span>Log into FC-native services without a raw address.</span>
+                      <span>Route DIDComm messages and credential requests.</span>
+                      <span>Anchor citizen and organization operations under one trust model.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item">Home</div>
+                  <div class="nav-item active">Identity</div>
+                  <div class="nav-item">Pay</div>
+                  <div class="nav-item">Org</div>
+                  <div class="nav-item">Inbox</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Pay</h3>
+              <p>支付页默认围绕稳定币与收付款展开。Gas 兑换在界面里是透明但不打扰的能力，只有在需要时才展开给用户看。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>Payment Layer</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">Pay</div>
+                  <h4>Send stablecoin</h4>
+                  <p>FC-DEX handles gas conversion automatically if native FCC is insufficient.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="sheet">
+                    <div class="list-label">Recipient</div>
+                    <h5>Global Transit Authority</h5>
+                    <div class="mini-copy">amelia.fc is paying a verified institution endpoint.</div>
+                  </div>
+
+                  <div class="sheet">
+                    <div class="list-label">Amount</div>
+                    <div class="amount">128.00 USDT</div>
+                    <div class="balance-row">
+                      <span class="pill cyan">Primary asset</span>
+                      <span class="pill gold">Gas abstracted</span>
+                    </div>
+                  </div>
+
+                  <div class="sheet">
+                    <div class="list-label">Settlement detail</div>
+                    <div class="bullet-list">
+                      <span>Required FCC is lower than current balance threshold.</span>
+                      <span>Auto Gas will swap 0.46 USDT to FCC using the best 2-hop route.</span>
+                      <span>Slippage guard remains inside the 5% default policy.</span>
+                    </div>
+                  </div>
+
+                  <div class="sheet">
+                    <div class="message-row">
+                      <div>
+                        <h5>Payment confidence</h5>
+                        <p>Estimated final confirmation: 0.8 seconds.</p>
+                      </div>
+                      <span class="pill green">Ready</span>
+                    </div>
+                    <button class="cta">Confirm Secure Payment</button>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item">Home</div>
+                  <div class="nav-item">Identity</div>
+                  <div class="nav-item active">Pay</div>
+                  <div class="nav-item">Org</div>
+                  <div class="nav-item">Inbox</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Organization</h3>
+              <p>组织工作台不是附属页，而是第二上下文。它需要体现组织身份、权限结构、多签流程与持续收入分润的严肃性。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>Organization Mode</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">E-Company Workspace</div>
+                  <h4>Future Trade Hub</h4>
+                  <p>Operate treasury, charter approvals and partner settlement under organization identity.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="organization-card">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Organization status</div>
+                        <h5>Licensed / NFT anchored</h5>
+                        <div class="mini-copy">Charter, ownership structure and operating license are anchored to FC Chain.</div>
+                      </div>
+                      <span class="pill gold">Gov linked</span>
+                    </div>
+                  </div>
+
+                  <div class="organization-card">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Treasury value</div>
+                        <div class="big-value">2.4M USDT</div>
+                        <div class="sub-value">11 assets / 3 jurisdictions / 2 partner governments</div>
+                      </div>
+                      <span class="pill cyan">3/5 multisig</span>
+                    </div>
+                  </div>
+
+                  <div class="request-item">
+                    <div class="message-row">
+                      <div>
+                        <h5>Pending multisig proposal</h5>
+                        <p>Approve annual licensing settlement to Bureau and partner government revenue-sharing accounts.</p>
+                      </div>
+                      <span class="pill red">2 of 5 signed</span>
+                    </div>
+                    <div class="bar"><span style="width: 40%"></span></div>
+                  </div>
+
+                  <div class="organization-card">
+                    <div class="list-label">Workspace modules</div>
+                    <div class="bullet-list">
+                      <span>Signers and governance roles</span>
+                      <span>Revenue-sharing ledger and payout records</span>
+                      <span>Compliance-ready transaction archives</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item">Home</div>
+                  <div class="nav-item">Identity</div>
+                  <div class="nav-item">Pay</div>
+                  <div class="nav-item active">Org</div>
+                  <div class="nav-item">Inbox</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Inbox</h3>
+              <p>消息中心不是聊天工具，而是可信交互枢纽。所有通知都必须带来源验证，并清晰区分官方、组织、服务与证明请求。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>DIDComm Channel</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">Secure Inbox</div>
+                  <h4>Trusted requests and notices</h4>
+                  <p>All communication routes through did:fc identity and verified sender layers.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="message-item">
+                    <div class="message-row">
+                      <div>
+                        <div class="list-label">Official notice</div>
+                        <h5>Future Citizen Bureau</h5>
+                        <div class="mini-copy">Updated residency access policy is available for review.</div>
+                      </div>
+                      <span class="pill gold">Official</span>
+                    </div>
+                  </div>
+
+                  <div class="message-item">
+                    <div class="message-row">
+                      <div>
+                        <div class="list-label">Proof request</div>
+                        <h5>Transit access confirmation</h5>
+                        <div class="mini-copy">Selective disclosure only: adult status and valid residency class.</div>
+                      </div>
+                      <span class="pill cyan">Verify</span>
+                    </div>
+                  </div>
+
+                  <div class="message-item">
+                    <div class="message-row">
+                      <div>
+                        <div class="list-label">Organization alert</div>
+                        <h5>Multisig reminder</h5>
+                        <div class="mini-copy">Future Trade Hub requires your signer action within 12 hours.</div>
+                      </div>
+                      <span class="pill red">Urgent</span>
+                    </div>
+                  </div>
+
+                  <div class="message-item">
+                    <div class="list-label">Inbox filters</div>
+                    <div class="bullet-list">
+                      <span>Official and government-linked communications</span>
+                      <span>Credential and identity requests</span>
+                      <span>Security events and compliance-facing alerts</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item">Home</div>
+                  <div class="nav-item">Identity</div>
+                  <div class="nav-item">Pay</div>
+                  <div class="nav-item">Org</div>
+                  <div class="nav-item active">Inbox</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="screen-unit">
+            <div class="screen-meta">
+              <h3>Security</h3>
+              <p>安全中心是用户理解 MPC 与恢复能力的地方。这里不应该堆砌密码学术语，而要让人明确知道自己是否安全、是否可恢复。</p>
+            </div>
+            <div class="phone">
+              <div class="phone-shell">
+                <div class="statusbar">
+                  <span>09:41</span>
+                  <span>Security Layer</span>
+                </div>
+                <div class="screen-top">
+                  <div class="label">Security Center</div>
+                  <h4>Recovery and device trust</h4>
+                  <p>Your account is protected by distributed key architecture and identity-based recovery.</p>
+                </div>
+
+                <div class="content-stack">
+                  <div class="security-card">
+                    <div class="balance-row">
+                      <div>
+                        <div class="list-label">Protection state</div>
+                        <h5>Recovery ready</h5>
+                        <div class="mini-copy">Digital ID anchor, Bureau server and Authority backup node are all active.</div>
+                      </div>
+                      <span class="pill green">Healthy</span>
+                    </div>
+                  </div>
+
+                  <div class="security-card">
+                    <div class="list-label">Device trust</div>
+                    <div class="security-checklist">
+                      <span>Primary phone protected inside secure hardware.</span>
+                      <span>Biometric gate plus local password derivation active.</span>
+                      <span>Last trusted device review completed 4 days ago.</span>
+                    </div>
+                  </div>
+
+                  <div class="security-card">
+                    <div class="list-label">Recovery path</div>
+                    <div class="security-checklist">
+                      <span>Rebind to a new device after national Digital ID verification.</span>
+                      <span>Encrypted shard retrieval takes place only after identity proof succeeds.</span>
+                      <span>Physical card status can be checked before initiating a reset.</span>
+                    </div>
+                  </div>
+
+                  <div class="security-card">
+                    <div class="message-row">
+                      <div>
+                        <h5>Physical ID card</h5>
+                        <div class="mini-copy">Card paired. Offline trust extension available for NFC verification and emergency pathways.</div>
+                      </div>
+                      <span class="pill cyan">Paired</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav">
+                  <div class="nav-item">Home</div>
+                  <div class="nav-item">Identity</div>
+                  <div class="nav-item">Pay</div>
+                  <div class="nav-item">Org</div>
+                  <div class="nav-item active">Security</div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <div class="footer-note">
+        这是一版方向性 UI 概念稿，当前主要用于确认视觉气质、信息架构与模块优先级是否正确。下一步如果你认可这个方向，我可以继续把其中任意一屏扩展成更细的高保真方案，包括页面层级、组件规格、状态变化、中文文案与交互说明。
+      </div>
+    </main>
+  </body>
+</html>
