@@ -1,246 +1,213 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, ArrowUp, Banknote, Bell, Building2, CheckCircle2, ChevronDown, ChevronLeft, CircleDollarSign, Fingerprint, MessageSquare, Phone, QrCode, Share2, Shield, ShieldCheck, Users, Vote } from 'lucide-react';
+import { Activity, ArrowUp, Banknote, Bell, Building2, CheckCircle2, ChevronDown, ChevronLeft, CircleDollarSign, Fingerprint, MessageSquare, Phone, QrCode, Search, Share2, Shield, ShieldCheck, Users, Vote, X, BookUser } from 'lucide-react';
 import { CITIZEN_ALERTS, CITIZEN_CHAT_CONTACTS } from '../data/mockData';
 
-const CommsHero = ({ tone = 'blue', eyebrow, title, subtitle, badge, icon, metrics }) => (
-  <div className={`comms-hero ${tone}`}>
-    <div className="comms-hero-top">
-      <div>
-        <div className="comms-hero-kicker">{eyebrow}</div>
-        <div className="comms-hero-title">{title}</div>
-        <div className="comms-hero-subtitle">{subtitle}</div>
-      </div>
-      <div className="comms-hero-side">
-        <div className={`comms-hero-badge ${tone}`}>{badge}</div>
-        <div className="comms-hero-icon-shell">{icon}</div>
-      </div>
-    </div>
-    <div className="comms-hero-metrics">
-      {metrics.map((metric) => (
-        <div key={metric.label} className="comms-hero-metric">
-          <span>{metric.label}</span>
-          <strong>{metric.value}</strong>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const AlertsModule = () => {
+/* =========================================================
+   AlertsModule — now used inside the bell dropdown only
+   ========================================================= */
+const AlertsModule = ({ compact }) => {
   const [expandedAlert, setExpandedAlert] = useState(null);
   const [dismissedAlerts, setDismissedAlerts] = useState([]);
-  const [alertFilter, setAlertFilter] = useState('All');
 
   const alerts = CITIZEN_ALERTS;
-
   const activeAlerts = alerts.filter((alert) => !dismissedAlerts.includes(alert.id));
-  const visibleAlerts = activeAlerts.filter((alert) => {
-    if (alertFilter === 'All') return true;
-    if (alertFilter === 'Unread') return alert.unread;
-    if (alertFilter === 'Urgent') return alert.type === 'urgent';
-    if (alertFilter === 'Security') return alert.type === 'security';
-    return true;
-  });
 
   const getAlertIcon = (alert) => {
     if (alert.from) return <span className="signal-avatar-copy">{alert.from}</span>;
-    if (alert.icon === 'building') return <Building2 size={20} color="var(--navy)" />;
-    if (alert.icon === 'shield') return <Shield size={20} color="var(--blue)" />;
-    if (alert.icon === 'vote') return <Vote size={20} color="var(--gold)" />;
-    if (alert.icon === 'activity') return <Activity size={20} color="var(--green)" />;
-    return <Bell size={20} color="var(--text-muted)" />;
+    if (alert.icon === 'building') return <Building2 size={18} color="var(--navy)" />;
+    if (alert.icon === 'shield') return <Shield size={18} color="var(--blue)" />;
+    if (alert.icon === 'vote') return <Vote size={18} color="var(--gold)" />;
+    if (alert.icon === 'activity') return <Activity size={18} color="var(--green)" />;
+    return <Bell size={18} color="var(--text-muted)" />;
   };
 
   return (
-    <motion.div key="alerts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <CommsHero
-        tone="gold"
-        eyebrow="Secure Communications"
-        title="Zero-Knowledge Alerts"
-        subtitle="Priority notices, governance signals, and security updates in one encrypted inbox."
-        badge={`${activeAlerts.filter((alert) => alert.unread).length} unread`}
-        icon={<Bell size={30} color="var(--gold)" />}
-        metrics={[
-          { label: 'Urgent', value: activeAlerts.filter((alert) => alert.type === 'urgent').length },
-          { label: 'Security', value: activeAlerts.filter((alert) => alert.type === 'security').length },
-          { label: 'Pending', value: activeAlerts.length },
-        ]}
-      />
-
-      <div className="signal-filter-row">
-        {['All', 'Unread', 'Urgent', 'Security'].map((filter) => (
-          <button
-            key={filter}
-            type="button"
-            className={`signal-filter-pill ${alertFilter === filter ? 'active gold' : ''}`}
-            onClick={() => setAlertFilter(filter)}
-          >
-            {filter}
-          </button>
-        ))}
-      </div>
-
-      <div className="signal-stack">
-        {visibleAlerts.map((alert) => (
+    <div className="notif-alerts-list">
+      {activeAlerts.length === 0 ? (
+        <div className="notif-empty">
+          <CheckCircle2 size={32} color="var(--green)" />
+          <span>All caught up</span>
+        </div>
+      ) : (
+        activeAlerts.map((alert) => (
           <div
             key={alert.id}
-            className={`signal-card ${alert.type} ${alert.unread ? 'unread' : ''}`}
+            className={`notif-alert-card ${alert.type} ${alert.unread ? 'unread' : ''}`}
             onClick={() => setExpandedAlert(expandedAlert === alert.id ? null : alert.id)}
           >
-            <div className="signal-card-head">
-              <div className={`signal-avatar ${alert.type}`}>{getAlertIcon(alert)}</div>
-              <div className="signal-copy">
-                <div className="signal-meta-row">
-                  <div className="signal-sender">{alert.sender}</div>
-                  <div className="signal-time">{alert.time}</div>
+            <div className="notif-alert-head">
+              <div className={`notif-alert-icon ${alert.type}`}>{getAlertIcon(alert)}</div>
+              <div className="notif-alert-copy">
+                <div className="notif-alert-top-row">
+                  <span className="notif-alert-sender">{alert.sender}</span>
+                  <span className="notif-alert-time">{alert.time}</span>
                 </div>
-                <div className="signal-title-row">
-                  <div className="signal-title">{alert.title}</div>
-                  {alert.unread ? <span className="signal-status-dot"></span> : null}
-                </div>
-                {expandedAlert !== alert.id ? <div className="signal-preview">{alert.preview}</div> : null}
+                <div className="notif-alert-title">{alert.title}</div>
               </div>
+              {alert.unread && <span className="notif-alert-dot"></span>}
             </div>
-
             {expandedAlert === alert.id && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="signal-expanded">
-                <div className="signal-expanded-copy">{alert.preview}</div>
-                {alert.actions.length > 0 ? (
-                  <div className="signal-action-row">
-                    {alert.actions.map((action, index) => (
-                      <button
-                        key={action}
-                        type="button"
-                        className={`signal-action-btn ${index === 0 ? 'primary' : 'secondary'}`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setDismissedAlerts((prev) => [...prev, alert.id]);
-                        }}
-                      >
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="notif-alert-body">
+                <p>{alert.preview}</p>
+                {alert.actions.length > 0 && (
+                  <div className="notif-alert-actions">
+                    {alert.actions.map((action, i) => (
+                      <button key={action} type="button" className={`notif-alert-btn ${i === 0 ? 'primary' : ''}`} onClick={(e) => { e.stopPropagation(); setDismissedAlerts(prev => [...prev, alert.id]); }}>
                         {action}
                       </button>
                     ))}
                   </div>
-                ) : null}
+                )}
               </motion.div>
             )}
           </div>
-        ))}
-
-        {visibleAlerts.length === 0 ? (
-          <div className="signal-empty-state">
-            <CheckCircle2 size={46} color="var(--green)" />
-            <div className="signal-empty-title">All Clear</div>
-            <div className="signal-empty-copy">No notifications match the current filter.</div>
-          </div>
-        ) : null}
-      </div>
-    </motion.div>
+        ))
+      )}
+    </div>
   );
 };
 
+/* =========================================================
+   ChatsModule — compact, with contact directory
+   ========================================================= */
 const ChatsModule = ({ onSelectChat, onOpenScanner }) => {
   const [chatQuery, setChatQuery] = useState('');
+  const [showDirectory, setShowDirectory] = useState(false);
 
   const contacts = CITIZEN_CHAT_CONTACTS;
-
   const totalUnread = contacts.reduce((count, contact) => count + contact.unread, 0);
+
   const filteredContacts = contacts.filter((contact) => {
     const query = chatQuery.trim().toLowerCase();
     if (!query) return true;
     return contact.name.toLowerCase().includes(query) || contact.lastMsg.toLowerCase().includes(query);
   });
 
+  // Directory: all contacts sorted alphabetically
+  const directoryContacts = [...contacts].sort((a, b) => a.name.localeCompare(b.name));
+  const filteredDirectory = directoryContacts.filter((contact) => {
+    const query = chatQuery.trim().toLowerCase();
+    if (!query) return true;
+    return contact.name.toLowerCase().includes(query);
+  });
+
   return (
-    <motion.div key="chats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <CommsHero
-        tone="blue"
-        eyebrow="Citizen Network"
-        title="Encrypted Chat"
-        subtitle="Verified peers, payment threads, and secure message history in one live relay."
-        badge={`${totalUnread} unread`}
-        icon={<MessageSquare size={30} color="var(--gold)" />}
-        metrics={[
-          { label: 'Contacts', value: contacts.length },
-          { label: 'L3 Peers', value: contacts.filter((contact) => contact.status.includes('L3')).length },
-          { label: 'Payments', value: contacts.filter((contact) => contact.lastMsgType === 'payment').length },
-        ]}
-      />
+    <motion.div key="chats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-      <div className="chat-search-row">
-        <div className="chat-search-shell">
-          <Users size={20} color="var(--text-muted)" />
-          <input
-            type="text"
-            placeholder="Search verified citizens..."
-            value={chatQuery}
-            onChange={(event) => setChatQuery(event.target.value)}
-            className="chat-search-input"
-          />
+      {/* Compact header row */}
+      <div className="chat-compact-header">
+        <div>
+          <div className="chat-compact-title">Messages</div>
+          <div className="chat-compact-subtitle">{totalUnread > 0 ? `${totalUnread} unread` : 'All read'} · {contacts.length} contacts</div>
         </div>
-        <button type="button" className="chat-scan-btn" onClick={onOpenScanner}>
-          <QrCode size={22} color="white" />
-        </button>
-      </div>
-
-      <div>
-        <div className="section-title">ACTIVE NOW</div>
-        <div className="chat-orbit-strip">
-          {contacts.slice(0, 4).map((contact) => (
-            <button key={contact.id} type="button" className="chat-orbit-pill" onClick={() => onSelectChat(contact)}>
-              <div className="chat-orbit-avatar-wrap">
-                <img src={contact.avatar} alt={contact.name} className="chat-orbit-avatar" />
-                <span className="chat-orbit-status"></span>
-              </div>
-              <span className="chat-orbit-name">{contact.name.split(' ')[0]}</span>
-            </button>
-          ))}
+        <div className="chat-compact-actions">
+          <button type="button" className={`chat-dir-toggle ${showDirectory ? 'active' : ''}`} onClick={() => setShowDirectory(!showDirectory)}>
+            <BookUser size={18} />
+          </button>
+          <button type="button" className="chat-scan-btn compact" onClick={onOpenScanner}>
+            <QrCode size={18} color="white" />
+          </button>
         </div>
       </div>
 
-      <div>
-        <div className="section-title">RECENT CHATS</div>
-        <div className="chat-list-shell">
-          {filteredContacts.map((contact, index) => (
-            <div key={contact.id}>
-              <button type="button" className="chat-row" onClick={() => onSelectChat(contact)}>
-                <div className="chat-row-avatar-wrap">
-                  <img src={contact.avatar} alt={contact.name} className="chat-row-avatar" />
-                  <span className="chat-row-verified"><CheckCircle2 size={12} color="var(--green)" /></span>
+      {/* Search */}
+      <div className="chat-search-shell compact">
+        <Search size={16} color="var(--text-muted)" />
+        <input
+          type="text"
+          placeholder={showDirectory ? 'Search contacts...' : 'Search chats...'}
+          value={chatQuery}
+          onChange={(event) => setChatQuery(event.target.value)}
+          className="chat-search-input compact"
+        />
+      </div>
+
+      {/* Directory View */}
+      {showDirectory && (
+        <div className="chat-directory-section">
+          <div className="section-title">CONTACT DIRECTORY</div>
+          <div className="chat-directory-grid">
+            {filteredDirectory.map((contact) => (
+              <button key={contact.id} type="button" className="chat-directory-card" onClick={() => { onSelectChat(contact); setShowDirectory(false); }}>
+                <div className="chat-directory-avatar-wrap">
+                  <img src={contact.avatar} alt={contact.name} className="chat-directory-avatar" />
+                  <span className="chat-directory-status-dot"></span>
                 </div>
-                <div className="chat-row-copy">
-                  <div className="chat-row-meta">
-                    <div className="chat-row-name">{contact.name}</div>
-                    <div className={`chat-row-time ${contact.unread > 0 ? 'active' : ''}`}>{contact.time}</div>
-                  </div>
-                  <div className="chat-row-message">
-                    <div className="chat-row-message-copy">
-                      {contact.lastMsgType === 'payment' ? <Banknote size={14} color="var(--blue)" /> : null}
-                      {contact.lastMsg}
-                    </div>
-                    {contact.unread > 0 ? <span className="chat-row-unread">{contact.unread}</span> : null}
-                  </div>
-                  <div className="chat-row-status">{contact.status}</div>
-                </div>
+                <div className="chat-directory-name">{contact.name.split(' ')[0]}</div>
+                <div className="chat-directory-level">{contact.status}</div>
               </button>
-              {index < filteredContacts.length - 1 ? <div className="chat-row-divider"></div> : null}
-            </div>
-          ))}
-
-          {filteredContacts.length === 0 ? (
-            <div className="signal-empty-state compact">
-              <MessageSquare size={42} color="var(--blue)" />
-              <div className="signal-empty-title">No matches</div>
-              <div className="signal-empty-copy">Try another name or search term.</div>
-            </div>
-          ) : null}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Active Now strip */}
+      {!showDirectory && (
+        <>
+          <div>
+            <div className="section-title" style={{ marginBottom: '8px' }}>ACTIVE NOW</div>
+            <div className="chat-orbit-strip compact">
+              {contacts.filter(c => c.unread > 0 || contacts.indexOf(c) < 3).slice(0, 4).map((contact) => (
+                <button key={contact.id} type="button" className="chat-orbit-pill compact" onClick={() => onSelectChat(contact)}>
+                  <div className="chat-orbit-avatar-wrap compact">
+                    <img src={contact.avatar} alt={contact.name} className="chat-orbit-avatar compact" />
+                    <span className="chat-orbit-status"></span>
+                  </div>
+                  <span className="chat-orbit-name">{contact.name.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent Chats */}
+          <div>
+            <div className="section-title" style={{ marginBottom: '8px' }}>RECENT CHATS</div>
+            <div className="chat-list-shell compact">
+              {filteredContacts.map((contact, index) => (
+                <div key={contact.id}>
+                  <button type="button" className="chat-row compact" onClick={() => onSelectChat(contact)}>
+                    <div className="chat-row-avatar-wrap">
+                      <img src={contact.avatar} alt={contact.name} className="chat-row-avatar compact" />
+                      <span className="chat-row-verified compact"><CheckCircle2 size={10} color="var(--green)" /></span>
+                    </div>
+                    <div className="chat-row-copy">
+                      <div className="chat-row-meta">
+                        <div className="chat-row-name compact">{contact.name}</div>
+                        <div className={`chat-row-time ${contact.unread > 0 ? 'active' : ''}`}>{contact.time}</div>
+                      </div>
+                      <div className="chat-row-message compact">
+                        <div className="chat-row-message-copy compact">
+                          {contact.lastMsgType === 'payment' ? <Banknote size={12} color="var(--blue)" /> : null}
+                          {contact.lastMsg}
+                        </div>
+                        {contact.unread > 0 ? <span className="chat-row-unread compact">{contact.unread}</span> : null}
+                      </div>
+                    </div>
+                  </button>
+                  {index < filteredContacts.length - 1 ? <div className="chat-row-divider compact"></div> : null}
+                </div>
+              ))}
+
+              {filteredContacts.length === 0 && (
+                <div className="signal-empty-state compact">
+                  <MessageSquare size={32} color="var(--blue)" />
+                  <div className="signal-empty-title">No matches</div>
+                  <div className="signal-empty-copy">Try another name or keyword.</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </motion.div>
   );
 };
+
+/* =========================================================
+   ChatDetailModule — kept as is (already functional)
+   ========================================================= */
 const ChatDetailModule = ({ contact, onBack }) => {
   const [showPaySheet, setShowPaySheet] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState('150');
@@ -252,18 +219,8 @@ const ChatDetailModule = ({ contact, onBack }) => {
   });
 
   const messageRows = [
-    {
-      id: 'contact-1',
-      type: 'incoming',
-      body: 'Hey! Are we still on for the Web3 summit tonight?',
-      meta: '10:30 AM',
-    },
-    {
-      id: 'me-1',
-      type: 'outgoing',
-      body: "Yes absolutely! I'll cover the tickets.",
-      meta: '10:35 AM • Read',
-    },
+    { id: 'contact-1', type: 'incoming', body: 'Hey! Are we still on for the Web3 summit tonight?', meta: '10:30 AM' },
+    { id: 'me-1', type: 'outgoing', body: "Yes absolutely! I'll cover the tickets.", meta: '10:35 AM • Read' },
   ];
 
   const [messages, setMessages] = useState(messageRows);
@@ -285,12 +242,10 @@ const ChatDetailModule = ({ contact, onBack }) => {
       setPaymentAmount((current) => current.slice(0, -1) || '0');
       return;
     }
-
     if (key === '.') {
       setPaymentAmount((current) => (current.includes('.') ? current : `${current}.`));
       return;
     }
-
     setPaymentAmount((current) => {
       if (current === '0') return String(key);
       return `${current}${key}`;
@@ -424,7 +379,6 @@ const ChatDetailModule = ({ contact, onBack }) => {
               onClick={(event) => event.stopPropagation()}
             >
               <div className="chat-pay-handle"></div>
-
               <div className="chat-pay-header">
                 <div>
                   <div className="chat-pay-kicker">Secure Transfer</div>
@@ -482,4 +436,4 @@ const ChatDetailModule = ({ contact, onBack }) => {
 };
 
 
-export { CommsHero, AlertsModule, ChatsModule, ChatDetailModule };
+export { AlertsModule, ChatsModule, ChatDetailModule };

@@ -1,240 +1,156 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { ArrowRightLeft, Building2, Calendar, Car, CheckCircle2, ChevronLeft, ChevronRight, Clock, CreditCard, Database, Download, Eye, EyeOff, FileText, Fingerprint, Globe, GraduationCap, Hash, Heart, Home as HomeIcon, IdCard, Landmark, Lock, Mail, MapPin, Phone, QrCode, Scan, Share2, Shield, ShieldCheck, Sparkles, Upload, User, Vote } from 'lucide-react';
+import { ArrowRightLeft, Building2, Calendar, Car, CheckCircle2, ChevronLeft, ChevronRight, Clock, CreditCard, Database, Download, Eye, EyeOff, FileText, Fingerprint, Globe, GraduationCap, Hash, Heart, Home as HomeIcon, IdCard, Landmark, Lock, Mail, MapPin, Phone, QrCode, Scan, Search, Share2, Shield, ShieldCheck, Sparkles, Upload, User, Vote } from 'lucide-react';
 import { CITIZEN_PROFILE } from '../data/mockData';
 
 const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
   const [serviceQuery, setServiceQuery] = useState('');
-  const nftCollection = [
-    { id: 'nft-1', name: 'FC Genesis Badge', collection: 'FC Authority', rarity: 'Legendary', image: null, color: '#D4AF37', bgGrad: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' },
-    { id: 'nft-2', name: 'Citizen ID #0042', collection: 'DID Collection', rarity: 'Unique', image: null, color: '#3b82f6', bgGrad: 'linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%)' },
-    { id: 'nft-3', name: 'Vanguard Access', collection: 'Corp Tokens', rarity: 'Rare', image: null, color: 'var(--green)', bgGrad: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)' },
-    { id: 'nft-4', name: 'ZKP Pioneer', collection: 'Achievement', rarity: 'Epic', image: null, color: '#8b5cf6', bgGrad: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)' },
+
+  /* ---- Government Services ---- */
+  const govServices = [
+    { id: 'governance', title: 'Governance', subtitle: '3 active proposals', icon: <Vote size={18} color="#c4b5fd" />, tone: 'purple', badge: '3', action: onOpenGovernance },
+    { id: 'gov-portal', title: 'Gov Portal', subtitle: 'Citizen services', icon: <Landmark size={18} color="#f5d46b" />, tone: 'gold' },
+    { id: 'tax', title: 'Tax & Revenue', subtitle: 'Filing & compliance', icon: <FileText size={18} color="#93c5fd" />, tone: 'blue' },
+    { id: 'immigration', title: 'Immigration', subtitle: 'Visa & residency', icon: <Globe size={18} color="#6ee7b7" />, tone: 'green' },
+    { id: 'registry', title: 'Corp Registry', subtitle: 'Business portal', icon: <Building2 size={18} color="#6ee7b7" />, tone: 'green' },
+    { id: 'legal', title: 'Legal Aid', subtitle: 'Dispute resolution', icon: <Shield size={18} color="#fca5a5" />, tone: 'red' },
   ];
 
-  const bridgeChains = [
-    { name: 'Ethereum', symbol: 'ETH', color: '#627EEA', icon: '◆' },
-    { name: 'Bitcoin', symbol: 'BTC', color: '#F7931A', icon: '₿' },
-    { name: 'Solana', symbol: 'SOL', color: '#14F195', icon: '◎' },
-    { name: 'Polygon', symbol: 'MATIC', color: '#8247E5', icon: '⬡' },
+  /* ---- Financial Services ---- */
+  const finServices = [
+    { id: 'bridge', title: 'Cross-Chain Bridge', subtitle: '4 routes active', icon: <ArrowRightLeft size={18} color="#93c5fd" />, tone: 'blue', action: onOpenBridge },
+    { id: 'explorer', title: 'FC Explorer', subtitle: 'Block explorer', icon: <Globe size={18} color="#93c5fd" />, tone: 'blue' },
+    { id: 'zkp', title: 'ZKP Studio', subtitle: 'Proof generator', icon: <ShieldCheck size={18} color="#c4b5fd" />, tone: 'purple' },
+    { id: 'lending', title: 'Sovereign Lending', subtitle: 'Collateral loans', icon: <CreditCard size={18} color="#f5d46b" />, tone: 'gold' },
   ];
 
+  /* ---- Digital Assets / Collectibles ---- */
+  const digitalAssets = [
+    { id: 'nft-1', name: 'FC Genesis Badge', collection: 'FC Authority', rarity: 'Legendary', color: '#D4AF37', bgGrad: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' },
+    { id: 'nft-2', name: 'Citizen ID #0042', collection: 'DID Collection', rarity: 'Unique', color: '#3b82f6', bgGrad: 'linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%)' },
+    { id: 'nft-3', name: 'Vanguard Access', collection: 'Corp Tokens', rarity: 'Rare', color: 'var(--green)', bgGrad: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)' },
+    { id: 'nft-4', name: 'ZKP Pioneer', collection: 'Achievement', rarity: 'Epic', color: '#8b5cf6', bgGrad: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)' },
+  ];
+
+  /* ---- RWA Assets ---- */
   const rwaAssets = [
-    { id: 'rwa-home', title: 'Primary Residence', subtitle: 'Deed #884-A • ZK-Verified', icon: <HomeIcon size={20} color="#93c5fd" />, status: 'Attested' },
-    { id: 'rwa-car', title: 'Tesla Model S Plaid', subtitle: 'VIN 5YJSA... • Registration active', icon: <Car size={20} color="#6ee7b7" />, status: 'Active' },
+    { id: 'rwa-home', title: 'Primary Residence', subtitle: 'Deed #884-A · ZK-Verified', icon: <HomeIcon size={16} color="#93c5fd" />, status: 'Attested' },
+    { id: 'rwa-car', title: 'Tesla Model S Plaid', subtitle: 'VIN 5YJSA · Registration active', icon: <Car size={16} color="#6ee7b7" />, status: 'Active' },
   ];
 
-  const appRegistry = [
-    { id: 'explorer', title: 'FC Explorer', subtitle: 'Block explorer', icon: <Globe size={20} color="#93c5fd" />, tone: 'blue' },
-    { id: 'registry', title: 'Corp Registry', subtitle: 'Business portal', icon: <Building2 size={20} color="#6ee7b7" />, tone: 'green' },
-    { id: 'gov', title: 'Gov Portal', subtitle: 'Citizen services', icon: <Landmark size={20} color="#f5d46b" />, tone: 'gold' },
-    { id: 'zkp', title: 'ZKP Studio', subtitle: 'Proof generator', icon: <ShieldCheck size={20} color="#c4b5fd" />, tone: 'purple' },
-  ];
-
-  const normalizedQuery = serviceQuery.trim().toLowerCase();
-  const filteredApps = appRegistry.filter((app) => {
-    if (!normalizedQuery) return true;
-    return app.title.toLowerCase().includes(normalizedQuery) || app.subtitle.toLowerCase().includes(normalizedQuery);
-  });
-
-  const filteredNfts = nftCollection.filter((nft) => {
-    if (!normalizedQuery) return true;
-    return nft.name.toLowerCase().includes(normalizedQuery) || nft.collection.toLowerCase().includes(normalizedQuery) || nft.rarity.toLowerCase().includes(normalizedQuery);
-  });
-
-  const filteredChains = bridgeChains.filter((chain) => {
-    if (!normalizedQuery) return true;
-    return chain.name.toLowerCase().includes(normalizedQuery) || chain.symbol.toLowerCase().includes(normalizedQuery);
-  });
-
-  const filteredRwa = rwaAssets.filter((asset) => {
-    if (!normalizedQuery) return true;
-    return asset.title.toLowerCase().includes(normalizedQuery) || asset.subtitle.toLowerCase().includes(normalizedQuery);
-  });
+  /* ---- Search ---- */
+  const q = serviceQuery.trim().toLowerCase();
+  const matchGov = govServices.filter(s => !q || s.title.toLowerCase().includes(q) || s.subtitle.toLowerCase().includes(q));
+  const matchFin = finServices.filter(s => !q || s.title.toLowerCase().includes(q) || s.subtitle.toLowerCase().includes(q));
+  const matchNft = digitalAssets.filter(a => !q || a.name.toLowerCase().includes(q) || a.collection.toLowerCase().includes(q));
+  const matchRwa = rwaAssets.filter(a => !q || a.title.toLowerCase().includes(q));
+  const totalResults = matchGov.length + matchFin.length + matchNft.length + matchRwa.length;
 
   return (
-    <motion.div key="services" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content services-shell" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div className="services-hero">
-        <div className="services-hero-top">
-          <div>
-            <div className="services-hero-kicker">Discovery Hub</div>
-            <div className="services-hero-title">Sovereign Services</div>
-            <div className="services-hero-copy">Collectibles, bridges, real-world assets, and verified applications in one secure directory.</div>
-          </div>
-          <div className="services-hero-badge">
-            <Sparkles size={14} />
-            {normalizedQuery ? `${filteredNfts.length + filteredChains.length + filteredRwa.length + filteredApps.length} results` : `${nftCollection.length + appRegistry.length} active`}
-          </div>
+    <motion.div key="services" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+      {/* Compact Header */}
+      <div className="svc-header">
+        <div>
+          <div className="svc-header-title">Services</div>
+          <div className="svc-header-subtitle">Sovereign service hub · {govServices.length + finServices.length} services</div>
         </div>
-        <div className="services-hero-metrics">
-          <div className="services-hero-metric">
-            <span>Collectibles</span>
-            <strong>{nftCollection.length}</strong>
-          </div>
-          <div className="services-hero-metric">
-            <span>Bridge Routes</span>
-            <strong>{bridgeChains.length}</strong>
-          </div>
-          <div className="services-hero-metric">
-            <span>Verified Apps</span>
-            <strong>{appRegistry.length}</strong>
-          </div>
+        <div className="svc-header-badge">
+          <Sparkles size={12} />
+          {q ? `${totalResults} found` : 'All active'}
         </div>
       </div>
 
-      <div className="services-search-shell">
-        <Sparkles size={18} color="#93c5fd" />
-        <input
-          type="text"
-          value={serviceQuery}
-          onChange={(event) => setServiceQuery(event.target.value)}
-          placeholder="Search services, NFTs, bridges..."
-          className="services-search-input"
-        />
-        <button type="button" className="services-search-btn">
-          Search
-        </button>
+      {/* Search */}
+      <div className="svc-search">
+        <Search size={16} color="var(--text-muted)" />
+        <input type="text" value={serviceQuery} onChange={e => setServiceQuery(e.target.value)} placeholder="Search services..." className="svc-search-input" />
       </div>
 
-      {(filteredNfts.length > 0 || !normalizedQuery) && (
-        <div className="services-section-card">
-          <div className="services-section-head">
-            <div>
-              <div className="section-title" style={{ margin: 0 }}>MY DIGITAL COLLECTIBLES</div>
-              <div className="services-section-copy">Identity proofs, access badges, and sovereign achievements.</div>
-            </div>
-            <div className="services-section-count">{filteredNfts.length} items</div>
-          </div>
-          <div className="services-collectible-grid">
-            {filteredNfts.map((nft) => (
-              <button key={nft.id} type="button" className="services-collectible-card" style={{ background: nft.bgGrad }}>
-                <div className="services-collectible-overlay"></div>
-                <div className="services-collectible-top">
-                  <div className="services-collectible-mark">
-                    {nft.name.charAt(0)}{nft.name.charAt(nft.name.indexOf(' ') + 1)}
-                  </div>
-                  <div className="services-collectible-rarity" style={{ color: nft.color }}>{nft.rarity}</div>
+      {/* ========== SECTION 1: Government Services ========== */}
+      {matchGov.length > 0 && (
+        <div className="svc-section">
+          <div className="section-title">GOVERNMENT SERVICES</div>
+          <div className="svc-list">
+            {matchGov.map(svc => (
+              <button key={svc.id} type="button" className="svc-row" onClick={svc.action || undefined}>
+                <div className={`svc-row-icon ${svc.tone}`}>{svc.icon}</div>
+                <div className="svc-row-copy">
+                  <div className="svc-row-title">{svc.title}</div>
+                  <div className="svc-row-sub">{svc.subtitle}</div>
                 </div>
-                <div className="services-collectible-title">{nft.name}</div>
-                <div className="services-collectible-subtitle">{nft.collection}</div>
+                {svc.badge && <span className="svc-row-badge">{svc.badge}</span>}
+                <ChevronRight size={16} color="var(--text-tertiary)" />
               </button>
             ))}
           </div>
-          {filteredNfts.length === 0 && normalizedQuery && (
-            <div className="services-empty-state compact">No collectibles match your search.</div>
+        </div>
+      )}
+
+      {/* ========== SECTION 2: Financial Services ========== */}
+      {matchFin.length > 0 && (
+        <div className="svc-section">
+          <div className="section-title">FINANCIAL SERVICES</div>
+          <div className="svc-grid">
+            {matchFin.map(svc => (
+              <button key={svc.id} type="button" className={`svc-card ${svc.tone}`} onClick={svc.action || undefined}>
+                <div className="svc-card-icon">{svc.icon}</div>
+                <div className="svc-card-title">{svc.title}</div>
+                <div className="svc-card-sub">{svc.subtitle}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========== SECTION 3: Digital Assets & RWA ========== */}
+      {(matchNft.length > 0 || matchRwa.length > 0) && (
+        <div className="svc-section">
+          <div className="section-title">DIGITAL ASSETS</div>
+
+          {/* NFT / Badge Scroll Strip */}
+          {matchNft.length > 0 && (
+            <div className="svc-nft-strip">
+              {matchNft.map(nft => (
+                <button key={nft.id} type="button" className="svc-nft-card" style={{ background: nft.bgGrad }}>
+                  <div className="svc-nft-overlay"></div>
+                  <div className="svc-nft-top">
+                    <span className="svc-nft-mark">{nft.name.charAt(0)}{nft.name.charAt(nft.name.indexOf(' ') + 1)}</span>
+                    <span className="svc-nft-rarity" style={{ color: nft.color }}>{nft.rarity}</span>
+                  </div>
+                  <div className="svc-nft-name">{nft.name}</div>
+                  <div className="svc-nft-col">{nft.collection}</div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* RWA Compact List */}
+          {matchRwa.length > 0 && (
+            <div className="svc-rwa-list">
+              {matchRwa.map(asset => (
+                <div key={asset.id} className="svc-rwa-row">
+                  <div className="svc-rwa-icon">{asset.icon}</div>
+                  <div className="svc-rwa-copy">
+                    <div className="svc-rwa-title">{asset.title}</div>
+                    <div className="svc-rwa-sub">{asset.subtitle}</div>
+                  </div>
+                  <div className="svc-rwa-status"><CheckCircle2 size={12} />{asset.status}</div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
 
-      {(filteredChains.length > 0 || !normalizedQuery) && (
-        <div className="services-bridge-card">
-          <div className="services-section-head">
-            <div>
-              <div className="section-title" style={{ margin: 0 }}>CROSS-CHAIN BRIDGE</div>
-              <div className="services-section-copy">Move sovereign assets across approved liquidity routes.</div>
-            </div>
-            <div className="services-bridge-icon">
-              <ArrowRightLeft size={20} color="#93c5fd" />
-            </div>
-          </div>
-
-          <div className="services-bridge-grid">
-            {filteredChains.map((chain) => (
-              <div key={chain.symbol} className="services-bridge-pill">
-                <div className="services-bridge-glyph">{chain.icon}</div>
-                <div className="services-bridge-symbol" style={{ color: chain.color }}>{chain.symbol}</div>
-                <div className="services-bridge-name">{chain.name}</div>
-              </div>
-            ))}
-          </div>
-
-          <button type="button" className="services-primary-btn" onClick={onOpenBridge}>
-            <ArrowRightLeft size={18} />
-            Start Bridge Transfer
-          </button>
+      {/* Empty State */}
+      {q && totalResults === 0 && (
+        <div className="svc-empty">
+          <Sparkles size={24} color="#93c5fd" />
+          <span>No services match your search.</span>
         </div>
       )}
-
-      {(filteredRwa.length > 0 || !normalizedQuery) && (
-        <div className="services-section-card">
-          <div className="services-section-head">
-            <div>
-              <div className="section-title" style={{ margin: 0 }}>RWA REGISTRY</div>
-              <div className="services-section-copy">Physical assets linked to verified ownership proofs.</div>
-            </div>
-            <div className="services-section-count">{filteredRwa.length} attested</div>
-          </div>
-          <div className="services-registry-list">
-            {filteredRwa.map((asset) => (
-              <div key={asset.id} className="services-registry-row">
-                <div className="services-registry-icon">{asset.icon}</div>
-                <div className="services-registry-copy">
-                  <div className="services-registry-title">{asset.title}</div>
-                  <div className="services-registry-subtitle">{asset.subtitle}</div>
-                </div>
-                <div className="services-registry-status">
-                  <CheckCircle2 size={14} />
-                  {asset.status}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button type="button" className="services-governance-card" onClick={onOpenGovernance}>
-        <div className="services-governance-top">
-          <div className="services-governance-icon">
-            <Vote size={22} color="#c4b5fd" />
-          </div>
-          <div className="services-governance-copy">
-            <div className="services-governance-title">Citizen Governance</div>
-            <div className="services-governance-subtitle">3 active proposals awaiting your vote</div>
-          </div>
-          <ChevronRight size={20} color="var(--text-tertiary)" />
-        </div>
-        <div className="services-governance-stats">
-          <div className="services-governance-stat">
-            <span>Your Power</span>
-            <strong>1,250 FCC</strong>
-          </div>
-          <div className="services-governance-stat">
-            <span>Participation</span>
-            <strong>87%</strong>
-          </div>
-          <div className="services-governance-stat">
-            <span>Last Vote</span>
-            <strong>3 days ago</strong>
-          </div>
-        </div>
-      </button>
-
-      <div className="services-section-card">
-        <div className="services-section-head">
-          <div>
-            <div className="section-title" style={{ margin: 0 }}>VERIFIED APPLICATIONS</div>
-            <div className="services-section-copy">Only trusted portals and proof-enabled services appear here.</div>
-          </div>
-          <div className="services-section-count">{filteredApps.length} shown</div>
-        </div>
-        <div className="services-app-grid">
-          {filteredApps.map((app) => (
-            <button key={app.id} type="button" className={`services-app-card ${app.tone}`}>
-              <div className="services-app-icon">{app.icon}</div>
-              <div className="services-app-title">{app.title}</div>
-              <div className="services-app-subtitle">{app.subtitle}</div>
-            </button>
-          ))}
-          {filteredApps.length === 0 ? (
-            <div className="services-empty-state">
-              <Sparkles size={26} color="#93c5fd" />
-              <div className="services-empty-title">No matches</div>
-              <div className="services-empty-copy">Try another keyword for apps or services.</div>
-            </div>
-          ) : null}
-        </div>
-      </div>
     </motion.div>
   );
 };

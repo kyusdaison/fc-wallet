@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Home as HomeIcon, IdCard, Building2, ChevronDown, Bell, Settings, ArrowDown, CheckCircle2, X, Info, ShieldCheck, MessageSquare, LayoutGrid, QrCode } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
@@ -87,6 +87,20 @@ export default function App() {
   const selectedZkpRequest = useWalletStore(s => s.selectedZkpRequest);
   const setSelectedZkpRequest = useWalletStore(s => s.setSelectedZkpRequest);
 
+  // Notification panel state
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const notifRef = useRef(null);
+
+  // Close notif panel on outside click
+  useEffect(() => {
+    if (!showNotifPanel) return;
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifPanel(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showNotifPanel]);
+
   const handleSendComplete = (newTx) => {
     addTransaction(newTx);
     addToast('Transaction sent successfully', 'success');
@@ -157,14 +171,25 @@ export default function App() {
           <div className="header-icon-btn" onClick={() => setShowScanner(true)}>
             <QrCode size={20} color="var(--gold)" />
           </div>
-          <div className="header-icon-btn" onClick={() => setActiveTab('Comms')}>
+          <div className="header-icon-btn" onClick={() => setShowNotifPanel(v => !v)}>
             <Bell size={20} color="var(--gold)" />
-            {(CITIZEN_ALERTS.filter(a => a.unread).length + CITIZEN_CHAT_CONTACTS.reduce((n, c) => n + c.unread, 0)) > 0 && (
+            {CITIZEN_ALERTS.filter(a => a.unread).length > 0 && (
               <div className="header-icon-badge red"></div>
             )}
           </div>
         </div>
       </div>
+
+      {/* ====== Notification Dropdown Panel ====== */}
+      <AnimatePresence>
+        {showNotifPanel && (
+          <motion.div key="notif-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="notif-backdrop" onClick={() => setShowNotifPanel(false)}>
+            <motion.div ref={notifRef} key="notif-panel" initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.95 }} transition={{ type: 'spring', damping: 25, stiffness: 350 }} className="notif-panel" onClick={e => e.stopPropagation()}>
+              <AlertsModule />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ====== Main Content ====== */}
       <div className="main-container">
@@ -193,8 +218,8 @@ export default function App() {
         <div className={`nav-item ${activeTab === 'Comms' ? 'active' : ''}`} onClick={() => setActiveTab('Comms')}>
           <div style={{ position: 'relative' }}>
             <MessageSquare size={22} strokeWidth={activeTab === 'Comms' ? 2.5 : 2} />
-            {(CITIZEN_ALERTS.filter(a => a.unread).length + CITIZEN_CHAT_CONTACTS.reduce((n, c) => n + c.unread, 0)) > 0 && (
-              <span className="nav-badge">{CITIZEN_ALERTS.filter(a => a.unread).length + CITIZEN_CHAT_CONTACTS.reduce((n, c) => n + c.unread, 0)}</span>
+            {CITIZEN_CHAT_CONTACTS.reduce((n, c) => n + c.unread, 0) > 0 && (
+              <span className="nav-badge">{CITIZEN_CHAT_CONTACTS.reduce((n, c) => n + c.unread, 0)}</span>
             )}
           </div>
           Comms
