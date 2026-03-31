@@ -1,0 +1,187 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774858967265,
+  "projectRoot": "/Users/kyusdaison/FC Wallet",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "vite",
+        "version": "8.0.1",
+        "category": "build"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "lint": "eslint .",
+      "preview": "vite preview"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "public",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 4,
+      "lastAccessed": 1774858967223,
+      "keyFiles": [
+        "favicon.svg",
+        "icons.svg",
+        "index.html",
+        "lion_logo.png"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 5,
+      "lastAccessed": 1774858967225,
+      "keyFiles": [
+        "FC_Wallet_Design_Framework_Proposal_CN.md",
+        "fc-wallet-functional-summary-and-proposal.md",
+        "fc-wallet-prd-notes.md",
+        "future-citizen-chain-briefing-notes.md",
+        "future-citizen-wallet-blueprint-notes.md"
+      ]
+    },
+    "output": {
+      "path": "output",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1774858967226,
+      "keyFiles": []
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 3,
+      "lastAccessed": 1774858967238,
+      "keyFiles": [
+        "favicon.svg",
+        "icons.svg",
+        "lion_logo.png"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 4,
+      "lastAccessed": 1774858967239,
+      "keyFiles": [
+        "App.css",
+        "App.jsx",
+        "index.css",
+        "main.jsx"
+      ]
+    },
+    "tmp": {
+      "path": "tmp",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774858967242,
+      "keyFiles": []
+    },
+    "dist/assets": {
+      "path": "dist/assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1774858967242,
+      "keyFiles": [
+        "index-C5JyGdB8.js",
+        "index-Cx3xUFx6.css"
+      ]
+    },
+    "src/assets": {
+      "path": "src/assets",
+      "purpose": "Static assets",
+      "fileCount": 3,
+      "lastAccessed": 1774858967245,
+      "keyFiles": [
+        "hero.png",
+        "react.svg",
+        "vite.svg"
+      ]
+    },
+    "tmp/docs": {
+      "path": "tmp/docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1774858967245,
+      "keyFiles": [
+        "FC_Wallet_Design_Framework_Proposal_CN.docx.png",
+        "fc-wallet-ui-concept.html.png"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/App.jsx",
+      "accessCount": 342,
+      "lastAccessed": 1774876939825,
+      "type": "file"
+    },
+    {
+      "path": "src/index.css",
+      "accessCount": 138,
+      "lastAccessed": 1774866101684,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 2,
+      "lastAccessed": 1774864859195,
+      "type": "directory"
+    },
+    {
+      "path": "src/App.css",
+      "accessCount": 1,
+      "lastAccessed": 1774859026572,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
