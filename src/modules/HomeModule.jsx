@@ -426,7 +426,7 @@ const OrgHomeModule = ({ setActiveTab, onOpenSwap, onOpenMultiSig }) => {
   ];
 
   return (
-    <motion.div key="org" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <motion.div key="org" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} className="oh-org-wrapper">
       <OrgIdentitySummary setActiveTab={setActiveTab} />
 
       <div className="home-action-grid">
@@ -463,17 +463,17 @@ const OrgHomeModule = ({ setActiveTab, onOpenSwap, onOpenMultiSig }) => {
         </div>
 
         {/* Vault Allocation Bars */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '16px' }}>
+        <div className="oh-vault-grid">
           {[
             { label: 'Operating', amount: '$1.8M', pct: 42, color: 'var(--blue)' },
             { label: 'Payroll', amount: '$1.5M', pct: 35, color: 'var(--gold)' },
             { label: 'Reserve', amount: '$0.95M', pct: 23, color: 'var(--green)' },
           ].map(item => (
-            <div key={item.label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '12px 10px', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize: '9px', color: 'var(--text-tertiary)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.label}</div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: '#fff', marginTop: '6px', fontFamily: 'var(--font-mono)', letterSpacing: '-0.02em' }}>{item.amount}</div>
-              <div style={{ marginTop: '10px', height: '3px', borderRadius: '2px', background: 'rgba(255,255,255,0.08)' }}>
-                <div style={{ width: `${item.pct}%`, height: '100%', borderRadius: '2px', background: item.color, boxShadow: `0 0 6px ${item.color}` }}></div>
+            <div key={item.label} className="oh-vault-card">
+              <div className="oh-vault-label">{item.label}</div>
+              <div className="oh-vault-amount">{item.amount}</div>
+              <div className="oh-vault-bar-track">
+                <div className="oh-vault-bar-fill" style={{ width: `${item.pct}%`, background: item.color, boxShadow: `0 0 6px ${item.color}` }}></div>
               </div>
             </div>
           ))}
@@ -503,7 +503,7 @@ const OrgHomeModule = ({ setActiveTab, onOpenSwap, onOpenMultiSig }) => {
       <div className="request-section">
         <div className="asset-section-header">
           <div>
-            <div className="section-title" style={{ margin: 0 }}>APPROVAL FLOW</div>
+            <div className="section-title oh-section-title-override">APPROVAL FLOW</div>
             <div className="asset-section-subtitle">Keep the signer queue moving before treasury windows close</div>
           </div>
           <div className="asset-section-count">1 urgent</div>
@@ -524,15 +524,15 @@ const OrgHomeModule = ({ setActiveTab, onOpenSwap, onOpenMultiSig }) => {
           </div>
 
           <div className="org-signature-footer">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+            <div className="oh-sig-container">
               <div className="org-signature-progress">
                 <span className="org-signature-progress-dot"></span>
                 1 of 3 signatures collected
               </div>
-              <div style={{ display: 'flex', gap: '5px' }}>
-                <div style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'var(--gold)', boxShadow: '0 0 6px rgba(201,162,39,0.5)' }}></div>
-                <div style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.10)' }}></div>
-                <div style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(255,255,255,0.10)' }}></div>
+              <div className="oh-sig-bars">
+                <div className="oh-sig-bar filled"></div>
+                <div className="oh-sig-bar"></div>
+                <div className="oh-sig-bar"></div>
               </div>
             </div>
             <span className="org-signature-cta">Review request</span>

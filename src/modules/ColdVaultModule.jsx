@@ -3,55 +3,54 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDown, ArrowUp, ArrowRightLeft, CheckCircle2, ChevronLeft, ChevronRight, Clock, Copy, CreditCard, Database, FileText, Fingerprint, Lock, Share2, Shield, SlidersHorizontal, X } from 'lucide-react';
 
-const ColdViewHeader = ({ tone = 'blue', eyebrow = 'Vault Flow', title, subtitle, badge, onBack }) => (
-  <div className="cold-subview-head">
-    <button type="button" className={`cold-back-link ${tone}`} onClick={onBack}>
-      <ChevronLeft size={20} strokeWidth={2.5} />
-      Back to Vault
-    </button>
-    <div className="cold-subview-title-wrap">
-      <span className="cold-subview-kicker">{eyebrow}</span>
-      <div className="cold-subview-title">{title}</div>
-      <div className="cold-subview-subtitle">{subtitle}</div>
-      {badge ? <div className={`cold-inline-badge ${tone}`}>{badge}</div> : null}
-    </div>
+/* ---- Shared micro-components (matches Settings page pattern) ---- */
+const CvBack = ({ title, onBack }) => (
+  <div className="cv-sub-header">
+    <button type="button" className="cv-back" onClick={onBack}><ChevronLeft size={20} color="#93c5fd" strokeWidth={2.5} /></button>
+    <span className="cv-sub-title">{title}</span>
   </div>
 );
 
-const ColdStageOrb = ({ tone = 'gold', icon, size = 'regular' }) => (
-  <motion.div
-    animate={{ scale: [1, 1.12, 1] }}
-    transition={{ duration: 2, repeat: Infinity }}
-    className={`cold-stage-orb ${tone} ${size}`}
-  >
-    <motion.div
-      animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
-      transition={{ duration: 2, repeat: Infinity }}
-      className="cold-stage-orb-ring"
-    />
-    {icon}
-  </motion.div>
+const CvInfoBar = ({ items }) => (
+  <div className="cv-info-bar">
+    {items.map(item => (
+      <div key={item.label} className="cv-info-item">
+        <span>{item.label}</span>
+        <strong style={item.color ? { color: item.color } : undefined}>{item.value}</strong>
+      </div>
+    ))}
+  </div>
 );
 
-const ColdActivityRow = ({ tx }) => {
-  const iconTone = tx.type === 'receive' ? 'green' : tx.type === 'send' ? 'red' : 'purple';
-  const title = tx.type === 'receive' ? `Received ${tx.asset}` : tx.type === 'send' ? `Sent ${tx.asset}` : `Swapped ${tx.asset}`;
-  const meta = tx.from || tx.to || 'FC Vault';
-  const amountTone = tx.type === 'receive' ? 'positive' : tx.type === 'send' ? 'negative' : 'neutral';
+const CvDivider = () => <div className="cv-divider"></div>;
 
+const CvRow = ({ icon, label, desc, right, onClick }) => (
+  <div onClick={onClick} onKeyDown={onClick ? e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined} className={`cv-row ${onClick ? 'clickable' : ''}`} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}>
+    {icon && <div className="cv-row-icon">{icon}</div>}
+    <div className="cv-row-copy">
+      <div className="cv-row-label">{label}</div>
+      {desc && <div className="cv-row-desc">{desc}</div>}
+    </div>
+    <div className="cv-row-trail">{right || (onClick && <ChevronRight size={16} color="var(--text-tertiary)" />)}</div>
+  </div>
+);
+
+/* ---- Activity row ---- */
+const CvActivityRow = ({ tx }) => {
+  const iconMap = { receive: <ArrowDown size={15} color="#10b981" />, send: <ArrowUp size={15} color="#ef4444" />, swap: <ArrowRightLeft size={14} color="#8b5cf6" /> };
+  const toneMap = { receive: 'green', send: 'red', swap: 'purple' };
+  const titleMap = { receive: `Received ${tx.asset}`, send: `Sent ${tx.asset}`, swap: `Swapped ${tx.asset}` };
   return (
-    <div className="cold-activity-row">
-      <div className={`cold-activity-icon ${iconTone}`}>
-        {tx.type === 'receive' ? <ArrowDown size={18} color="#10b981" /> : tx.type === 'send' ? <ArrowUp size={18} color="#ef4444" /> : <ArrowRightLeft size={16} color="#8b5cf6" />}
+    <div className="cv-tx-row">
+      <div className={`cv-tx-icon ${toneMap[tx.type]}`}>{iconMap[tx.type]}</div>
+      <div className="cv-tx-copy">
+        <div className="cv-tx-title">{titleMap[tx.type]}</div>
+        <div className="cv-tx-meta">{tx.time} · {tx.from || tx.to || 'FC Vault'}</div>
       </div>
-      <div className="cold-activity-copy">
-        <div className="cold-activity-title">{title}</div>
-        <div className="cold-activity-subtitle">{tx.time} • {meta}</div>
-      </div>
-      <div className="cold-activity-side">
-        <div className={`cold-activity-amount ${amountTone}`}>{tx.amount}</div>
-        <div className="cold-activity-meta">
-          {tx.level ? <span className={`cold-level-pill ${tx.level === 'L3' ? 'gold' : 'blue'}`}>{tx.level}</span> : null}
+      <div className="cv-tx-side">
+        <div className={`cv-tx-amount ${tx.type === 'receive' ? 'positive' : tx.type === 'send' ? 'negative' : ''}`}>{tx.amount}</div>
+        <div className="cv-tx-fiat">
+          {tx.level && <span className={`cv-badge ${tx.level === 'L3' ? 'gold' : 'blue'}`}>{tx.level}</span>}
           <span>{tx.fiat}</span>
         </div>
       </div>
@@ -59,111 +58,72 @@ const ColdActivityRow = ({ tx }) => {
   );
 };
 
-const ColdSectionHeader = ({ label, meta, actionLabel, onAction }) => (
-  <div className="cold-section-head">
-    <div>
-      <div className="cold-section-title">{label}</div>
-      {meta ? <div className="cold-section-meta">{meta}</div> : null}
+/* ---- Asset row ---- */
+const CvAssetRow = ({ asset, onClick }) => (
+  <button type="button" className="cv-row clickable" onClick={onClick}>
+    <div className="cv-token" style={{ background: `${asset.color}18`, color: asset.color }}>{asset.icon}</div>
+    <div className="cv-row-copy">
+      <div className="cv-row-label">{asset.name}</div>
+      <div className="cv-row-desc">{asset.symbol} <span className="cv-cold-tag">Cold</span></div>
     </div>
-    {actionLabel ? (
-      <button type="button" className="cold-section-link" onClick={onAction}>
-        {actionLabel}
-      </button>
-    ) : null}
-  </div>
-);
-
-const ColdVaultAssetRow = ({ asset, onClick }) => (
-  <button type="button" className="cold-list-row" onClick={onClick}>
-    <div className="cold-list-token" style={{ background: `${asset.color}18`, color: asset.color }}>
-      {asset.icon}
-    </div>
-    <div className="cold-list-copy">
-      <div className="cold-list-title">{asset.name}</div>
-      <div className="cold-list-subtitle">
-        {asset.symbol}
-        <span className="cold-tag">Cold</span>
-      </div>
-    </div>
-    <div className="cold-list-side">
-      <div className="cold-list-value">{asset.balance}</div>
-      <div className="cold-list-caption">
-        {asset.fiat}
-        <span className={asset.positive ? 'positive' : 'negative'}>{asset.change}</span>
-      </div>
+    <div className="cv-row-trail" style={{ textAlign: 'right' }}>
+      <div className="cv-row-label">{asset.balance}</div>
+      <div className="cv-row-desc">{asset.fiat} <span className={asset.positive ? 'positive' : 'negative'}>{asset.change}</span></div>
     </div>
   </button>
 );
 
-const ColdBackupCardRow = ({ card }) => (
-  <div className={`cold-list-row static ${card.status}`}>
-    <div className={`cold-card-token ${card.status}`}>
-      <CreditCard size={20} color={card.status === 'connected' ? 'var(--gold)' : card.status === 'synced' ? '#10b981' : 'rgba(255,255,255,0.24)'} />
+/* ---- Backup card row ---- */
+const CvCardRow = ({ card }) => (
+  <div className="cv-row">
+    <div className={`cv-card-icon ${card.status}`}>
+      <CreditCard size={16} color={card.status === 'connected' ? 'var(--gold)' : card.status === 'synced' ? '#10b981' : 'var(--text-tertiary)'} />
     </div>
-    <div className="cold-list-copy">
-      <div className="cold-list-title">{card.name}</div>
-      <div className="cold-list-subtitle">····{card.last4} • {card.firmware} • {card.lastSync}</div>
+    <div className="cv-row-copy">
+      <div className="cv-row-label">{card.name}</div>
+      <div className="cv-row-desc">····{card.last4} · {card.firmware} · {card.lastSync}</div>
     </div>
-    <div className={`cold-state-pill ${card.status}`}>
-      <span className="cold-state-pill-dot"></span>
-      {card.status === 'empty' ? 'Add Card' : card.status}
+    <div className={`cv-status-pill ${card.status}`}>
+      <span className="cv-status-dot"></span>
+      {card.status === 'empty' ? 'Add' : card.status}
     </div>
   </div>
 );
 
-const ColdSecurityRow = ({ item, onClick }) => (
-  <button type="button" className="cold-list-row static security" onClick={onClick} disabled={!onClick}>
-    <div className="cold-security-icon">{item.icon}</div>
-    <div className="cold-list-copy">
-      <div className="cold-list-title">{item.label}</div>
-    </div>
-    <div className="cold-security-value" style={{ color: item.vColor }}>{item.value}</div>
-    <ChevronRight size={16} color="rgba(255,255,255,0.2)" />
-  </button>
-);
-
+/* ============================================================
+   COLD VAULT MODULE
+   ============================================================ */
 const ColdVaultModule = ({ onClose, onOpenSettings }) => {
   const [cardConnected, setCardConnected] = useState(true);
   const [showNfcModal, setShowNfcModal] = useState(false);
-  const [coldView, setColdView] = useState('main'); // main, send, receive, swap, activity, assetDetail
-  const [coldSendStep, setColdSendStep] = useState('form'); // form, nfc, pin, success
+  const [coldView, setColdView] = useState('main');
+  const [coldSendStep, setColdSendStep] = useState('form');
   const [coldSendAddr, setColdSendAddr] = useState('');
   const [coldSendAmount, setColdSendAmount] = useState('');
   const [coldSendAsset, setColdSendAsset] = useState('FCUSD');
   const [coldPinInput, setColdPinInput] = useState('');
   const [copiedAddr, setCopiedAddr] = useState(false);
-  // Swap state
   const [swapFrom, setSwapFrom] = useState('FCC');
   const [swapTo, setSwapTo] = useState('FCUSD');
   const [swapAmount, setSwapAmount] = useState('');
-  const [swapStep, setSwapStep] = useState('form'); // form, preview, nfc, success
-  // Asset detail state
+  const [swapStep, setSwapStep] = useState('form');
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [activityFilter, setActivityFilter] = useState('All');
 
+  /* ---- Data ---- */
   const coldAssets = [
-    { symbol: 'FCC', name: 'FC Coin', balance: '125,000.00', fiat: '$227,500.00', change: '+3.2%', positive: true, color: 'var(--green)', icon: '◆' },
-    { symbol: 'FCUSD', name: 'FC Stablecoin', balance: '250,000.00', fiat: '$250,000.00', change: '0.0%', positive: true, color: '#3b82f6', icon: '◎' },
-    { symbol: 'BTC', name: 'Bitcoin', balance: '1.8524', fiat: '$178,430.00', change: '+1.8%', positive: true, color: '#f7931a', icon: '₿' },
-    { symbol: 'ETH', name: 'Ethereum', balance: '28.45', fiat: '$98,472.00', change: '-0.4%', positive: false, color: '#627eea', icon: 'Ξ' },
-    { symbol: 'SOL', name: 'Solana', balance: '340.00', fiat: '$62,220.00', change: '+5.1%', positive: true, color: '#9945ff', icon: '◐' },
+    { symbol: 'FCC', name: 'FC Coin', balance: '125,000.00', fiat: '$227,500', change: '+3.2%', positive: true, color: 'var(--green)', icon: '◆' },
+    { symbol: 'FCUSD', name: 'FC Stablecoin', balance: '250,000.00', fiat: '$250,000', change: '0.0%', positive: true, color: '#3b82f6', icon: '◎' },
+    { symbol: 'BTC', name: 'Bitcoin', balance: '1.8524', fiat: '$178,430', change: '+1.8%', positive: true, color: '#f7931a', icon: '₿' },
+    { symbol: 'ETH', name: 'Ethereum', balance: '28.45', fiat: '$98,472', change: '-0.4%', positive: false, color: '#627eea', icon: 'Ξ' },
+    { symbol: 'SOL', name: 'Solana', balance: '340.00', fiat: '$62,220', change: '+5.1%', positive: true, color: '#9945ff', icon: '◐' },
   ];
-
   const coldTransactions = [
     { type: 'receive', asset: 'BTC', amount: '+0.5000', fiat: '+$48,200', time: '2h ago', level: 'L3', from: '0x7f2...4e1' },
     { type: 'send', asset: 'FCUSD', amount: '-10,000', fiat: '-$10,000', time: '1d ago', level: 'L2', to: '0xa3c...9b2' },
     { type: 'receive', asset: 'ETH', amount: '+5.0000', fiat: '+$17,300', time: '3d ago', level: 'L2', from: '0x1b8...5f0' },
     { type: 'swap', asset: 'FCC→FCUSD', amount: '5,000', fiat: '$9,100', time: '5d ago', level: 'L2', from: 'DEX' },
   ];
-
-  const backupCards = [
-    { id: 1, name: 'Primary Card', last4: '9201', status: 'connected', firmware: 'v2.1.4', lastSync: 'Just now' },
-    { id: 2, name: 'Backup Card 1', last4: '4782', status: 'synced', firmware: 'v2.1.4', lastSync: '12h ago' },
-    { id: 3, name: 'Backup Card 2', last4: '—', status: 'empty', firmware: '—', lastSync: 'Not paired' },
-  ];
-
-  const totalColdBalance = '$816,622.00';
-  const coldReceiveAddress = 'fc1q9x8m4v2k7h3n5p6w0t1r8y4u2i9o7a3s5d';
   const extendedColdTransactions = [
     ...coldTransactions,
     { type: 'receive', asset: 'FCC', amount: '+15,000', fiat: '+$27,300', time: '1w ago', level: 'L2', from: '0x4d2...8c3' },
@@ -173,292 +133,166 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
     { type: 'send', asset: 'FCUSD', amount: '-5,000', fiat: '-$5,000', time: '3w ago', level: 'L2', to: '0xe5c...7d4' },
     { type: 'receive', asset: 'BTC', amount: '+0.3000', fiat: '+$28,860', time: '1m ago', level: 'L3', from: '0x2a8...6e9' },
   ];
+  const backupCards = [
+    { id: 1, name: 'Primary Card', last4: '9201', status: 'connected', firmware: 'v2.1.4', lastSync: 'Just now' },
+    { id: 2, name: 'Backup Card 1', last4: '4782', status: 'synced', firmware: 'v2.1.4', lastSync: '12h ago' },
+    { id: 3, name: 'Backup Card 2', last4: '—', status: 'empty', firmware: '—', lastSync: 'Not paired' },
+  ];
+  const securityItems = [
+    { icon: <Fingerprint size={16} color="#10b981" />, label: 'Biometric Lock', value: 'Enabled', vColor: '#10b981' },
+    { icon: <Lock size={16} color="#f59e0b" />, label: 'Access Code', value: '••••••', vColor: 'var(--text-secondary)' },
+    { icon: <Clock size={16} color="#3b82f6" />, label: 'Auto-Lock', value: '5 min', vColor: 'var(--text-secondary)' },
+    { icon: <SlidersHorizontal size={16} color="#ef4444" />, label: 'Signing Rules', value: '4 Levels', vColor: '#fca5a5', action: () => { if (onOpenSettings) { onClose(); onOpenSettings(); } } },
+    { icon: <Shield size={16} color="#8b5cf6" />, label: 'Firmware', value: 'Verified', vColor: '#10b981' },
+  ];
+  const coldReceiveAddress = 'fc1q9x8m4v2k7h3n5p6w0t1r8y4u2i9o7a3s5d';
 
-  const getColdAssetRate = (symbol) => {
-    const rates = { BTC: 96200, ETH: 3460, FCC: 1.82, SOL: 183, FCUSD: 1 };
-    return rates[symbol] || 1;
+  /* ---- Derived ---- */
+  const totalColdBalance = '$816,622';
+  const getColdAssetRate = (s) => ({ BTC: 96200, ETH: 3460, FCC: 1.82, SOL: 183, FCUSD: 1 }[s] || 1);
+  const getColdSwapQuote = (amt, from, to) => {
+    const p = Number.parseFloat(String(amt).replace(/,/g, ''));
+    if (!Number.isFinite(p) || p <= 0) return '';
+    const q = (p * getColdAssetRate(from)) / getColdAssetRate(to);
+    return q.toFixed(to === 'BTC' ? 6 : to === 'ETH' ? 4 : 2);
   };
-
-  const getColdSwapQuote = (amount, from, to) => {
-    const parsedAmount = Number.parseFloat(String(amount).replace(/,/g, ''));
-    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) return '';
-    const quote = (parsedAmount * getColdAssetRate(from)) / getColdAssetRate(to);
-    const digits = to === 'BTC' ? 6 : to === 'ETH' ? 4 : 2;
-    return quote.toFixed(digits);
-  };
-
   const coldSwapQuote = getColdSwapQuote(swapAmount, swapFrom, swapTo);
-  const coldSwapRate = (getColdAssetRate(swapFrom) / getColdAssetRate(swapTo));
+  const coldSwapRate = getColdAssetRate(swapFrom) / getColdAssetRate(swapTo);
   const coldSendReady = coldSendAddr.trim() && coldSendAmount.trim();
   const swapReady = swapAmount.trim() && Number.parseFloat(String(swapAmount).replace(/,/g, '')) > 0;
-  const swapFromAsset = coldAssets.find((asset) => asset.symbol === swapFrom);
-  const swapTargetAssets = coldAssets.filter((asset) => asset.symbol !== swapFrom);
-  const filteredActivityTransactions = extendedColdTransactions.filter((tx) => {
-    if (activityFilter === 'All') return true;
-    if (activityFilter === 'Sent') return tx.type === 'send';
-    if (activityFilter === 'Received') return tx.type === 'receive';
-    if (activityFilter === 'Swapped') return tx.type === 'swap';
-    return true;
-  });
-  const selectedAssetTransactions = selectedAsset
-    ? extendedColdTransactions.filter((tx) => tx.asset.includes(selectedAsset.symbol))
-    : [];
-  const securityItems = [
-    { icon: <Fingerprint size={18} color="#10b981" />, label: 'Biometric Lock', value: 'Enabled', vColor: '#10b981', action: null },
-    { icon: <Lock size={18} color="#f59e0b" />, label: 'Access Code', value: '••••••', vColor: 'rgba(255,255,255,0.6)', action: null },
-    { icon: <Clock size={18} color="#3b82f6" />, label: 'Auto-Lock', value: '5 minutes', vColor: 'rgba(255,255,255,0.6)', action: null },
-    { icon: <SlidersHorizontal size={18} color="#ef4444" />, label: 'Signing Rules', value: '4 Levels Active', vColor: '#fca5a5', action: () => { if (onOpenSettings) { onClose(); onOpenSettings(); } } },
-    { icon: <Shield size={18} color="#8b5cf6" />, label: 'Firmware Attestation', value: 'Verified', vColor: '#10b981', action: null },
-  ];
+  const swapFromAsset = coldAssets.find(a => a.symbol === swapFrom);
+  const swapTargetAssets = coldAssets.filter(a => a.symbol !== swapFrom);
+  const filteredActivity = extendedColdTransactions.filter(tx => activityFilter === 'All' || (activityFilter === 'Sent' && tx.type === 'send') || (activityFilter === 'Received' && tx.type === 'receive') || (activityFilter === 'Swapped' && tx.type === 'swap'));
+  const selectedAssetTxs = selectedAsset ? extendedColdTransactions.filter(tx => tx.asset.includes(selectedAsset.symbol)) : [];
 
-  const handleCopyColdAddress = () => {
-    navigator.clipboard.writeText(coldReceiveAddress).catch(() => {});
-    setCopiedAddr(true);
-    setTimeout(() => setCopiedAddr(false), 2000);
-  };
+  const handleCopy = () => { navigator.clipboard.writeText(coldReceiveAddress).catch(() => {}); setCopiedAddr(true); setTimeout(() => setCopiedAddr(false), 2000); };
+  const handleShare = async () => { if (navigator.share) { try { await navigator.share({ title: 'FC Cold Vault', text: coldReceiveAddress }); return; } catch {} } handleCopy(); };
 
-  const handleShareColdAddress = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'FC Cold Vault Address',
-          text: coldReceiveAddress,
-        });
-        return;
-      } catch {
-        // fall through to copy on share cancel/failure
-      }
-    }
-    handleCopyColdAddress();
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.3 }}
-      className="cold-vault-overlay"
-      style={{ background: '#0d0d0f', display: 'flex', flexDirection: 'column' }}
-    >
-      {/* NFC Tap Overlay */}
-      {showNfcModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '32px' }}>
-          <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 2, repeat: Infinity }} style={{ width: '160px', height: '160px', borderRadius: '50%', border: '3px solid rgba(212,175,55,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-            <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }} transition={{ duration: 2, repeat: Infinity }} style={{ position: 'absolute', inset: '-20px', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.15)' }}></motion.div>
-            <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0, 0.2] }} transition={{ duration: 2, repeat: Infinity, delay: 0.3 }} style={{ position: 'absolute', inset: '-40px', borderRadius: '50%', border: '1px solid rgba(212,175,55,0.08)' }}></motion.div>
-            <CreditCard size={48} color="var(--gold)" />
-          </motion.div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Tap Your FC Card</div>
-            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', fontWeight: '500' }}>Hold your card near the top of the phone</div>
-          </div>
-          <button onClick={() => { setShowNfcModal(false); setCardConnected(true); }} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '14px', padding: '14px 40px', color: 'rgba(255,255,255,0.6)', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}>Cancel</button>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="cold-vault-header">
-        <div className="cold-vault-header-brand">
-          <div className="cold-vault-header-icon">
-            <Shield size={18} color="var(--gold)" />
-          </div>
-          <div>
-            <div className="cold-vault-header-title">Cold Vault</div>
-            <div className="cold-vault-header-subtitle">FC Black Card ····9201</div>
-          </div>
-        </div>
-
-        <div className="cold-vault-header-actions">
-          <button
-            type="button"
-            className={`cold-vault-header-chip ${cardConnected ? 'connected' : 'disconnected'}`}
-            onClick={() => { if (!cardConnected) setShowNfcModal(true); }}
-          >
-            <span className="cold-vault-header-chip-dot"></span>
-            {cardConnected ? 'Ready to sign' : 'Tap card'}
-          </button>
-          <button type="button" className="cold-vault-close" onClick={onClose}>
-            <X size={18} color="rgba(255,255,255,0.64)" />
-          </button>
-        </div>
+  /* ---- NFC tap stage (reusable) ---- */
+  const NfcStage = ({ label, detail, onTap, onCancel, tone = 'gold' }) => (
+    <div className="cv-stage">
+      <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }} className={`cv-stage-orb ${tone}`}>
+        <CreditCard size={36} color={tone === 'gold' ? 'var(--gold)' : tone === 'purple' ? '#c4b5fd' : '#60a5fa'} />
+      </motion.div>
+      <div className="cv-stage-title">Tap Your FC Card</div>
+      <div className="cv-stage-desc">Hold card near phone to sign</div>
+      {label && <div className="cv-stage-summary"><span>{label}</span><strong>{detail}</strong></div>}
+      <div className="cv-stage-actions">
+        <button type="button" className={`cv-btn primary ${tone}`} onClick={onTap}>Simulate NFC Tap</button>
+        <button type="button" className="cv-btn ghost" onClick={onCancel}>Cancel</button>
       </div>
+    </div>
+  );
 
-      {/* Scrollable Content */}
-      <div className="cold-vault-scroll">
+  /* ---- Success stage (reusable) ---- */
+  const SuccessStage = ({ title, subtitle, detail, onDone }) => (
+    <div className="cv-stage">
+      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12 }}>
+        <CheckCircle2 size={44} color="#10b981" />
+      </motion.div>
+      <div className="cv-stage-title">{title}</div>
+      <div className="cv-stage-desc">{subtitle}</div>
+      {detail && <div className="cv-stage-summary success"><strong>{detail}</strong></div>}
+      <button type="button" className="cv-btn primary green" onClick={onDone}>Done</button>
+    </div>
+  );
 
-        {/* ===== SEND SUB-VIEW ===== */}
-        {coldView === 'send' && (
-          <div className="cold-subview">
-            <ColdViewHeader
-              tone="blue"
-              eyebrow="Secure Transfer"
-              title="Cold Send"
-              subtitle="Move funds out of hardware custody with NFC confirmation and PIN verification."
-              badge="L2 single sign • NFC required"
-              onBack={() => setColdView('main')}
-            />
+  /* ============================================================
+     SUB-PAGES
+     ============================================================ */
+  const renderSubView = () => {
+    switch (coldView) {
 
+      /* ---- SEND ---- */
+      case 'send':
+        return (<>
+          <CvBack title="Cold Send" onBack={() => { setColdView('main'); setColdSendStep('form'); }} />
+          <div className="cv-page">
             {coldSendStep === 'form' && (<>
-              <div className="cold-panel tonal-blue">
-                <div className="cold-form-label">Recipient Address</div>
-                <input
-                  type="text"
-                  value={coldSendAddr}
-                  onChange={e => setColdSendAddr(e.target.value)}
-                  placeholder="0x... or fc1..."
-                  className="cold-form-input cold-mono"
-                />
+              <CvInfoBar items={[
+                { label: 'Asset', value: coldSendAsset },
+                { label: 'Level', value: 'L2 Sign' },
+                { label: 'Card', value: '····9201' },
+              ]} />
+
+              <div className="cv-card" style={{ padding: '14px' }}>
+                <div className="cv-field-label">Recipient</div>
+                <input type="text" value={coldSendAddr} onChange={e => setColdSendAddr(e.target.value)} placeholder="0x... or fc1..." className="cv-input mono" />
               </div>
 
-              <div className="cold-panel">
-                <div className="cold-form-label">Asset</div>
-                <div className="cold-chip-list fixed">
-                  {['FCUSD', 'FCC', 'BTC', 'ETH'].map((assetId) => (
-                    <button
-                      key={assetId}
-                      type="button"
-                      className={`cold-chip blue ${coldSendAsset === assetId ? 'active' : ''}`}
-                      onClick={() => setColdSendAsset(assetId)}
-                    >
-                      {assetId}
-                    </button>
+              <div className="cv-card" style={{ padding: '14px' }}>
+                <div className="cv-field-label">Asset</div>
+                <div className="cv-chip-row">
+                  {['FCUSD', 'FCC', 'BTC', 'ETH'].map(a => (
+                    <button key={a} type="button" className={`cv-chip ${coldSendAsset === a ? 'active' : ''}`} onClick={() => setColdSendAsset(a)}>{a}</button>
                   ))}
                 </div>
-              </div>
-
-              <div className="cold-panel">
-                <div className="cold-form-label">Amount</div>
-                <div className="cold-amount-shell">
-                  <input
-                    type="text"
-                    value={coldSendAmount}
-                    onChange={e => setColdSendAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="cold-form-input cold-form-amount cold-mono"
-                  />
-                  <span className="cold-amount-suffix">{coldSendAsset}</span>
-                </div>
-                <div className="cold-form-note">This transfer will be signed by FC Black Card ····9201 and broadcast after PIN confirmation.</div>
-              </div>
-
-              <div className="cold-note-card blue">
-                <Shield size={16} color="#60a5fa" />
-                <div>
-                  Policy check is active. Trusted destinations can pass through single-sign, while restricted routes escalate automatically.
+                <div className="cv-field-label" style={{ marginTop: 10 }}>Amount</div>
+                <div className="cv-input-row">
+                  <input type="text" value={coldSendAmount} onChange={e => setColdSendAmount(e.target.value)} placeholder="0.00" className="cv-input mono amount" />
+                  <span className="cv-input-unit">{coldSendAsset}</span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                className={`cold-primary-cta blue ${coldSendReady ? '' : 'disabled'}`}
-                onClick={() => { if (coldSendReady) setColdSendStep('nfc'); }}
-              >
-                <CreditCard size={20} />
-                Continue to Sign
+              <div className="cv-note blue">
+                <Shield size={14} color="#60a5fa" />
+                <span>Trusted destinations pass single-sign; restricted routes auto-escalate.</span>
+              </div>
+
+              <button type="button" className={`cv-btn primary blue full ${coldSendReady ? '' : 'disabled'}`} onClick={() => { if (coldSendReady) setColdSendStep('nfc'); }}>
+                <CreditCard size={18} /> Continue to Sign
               </button>
             </>)}
 
             {coldSendStep === 'nfc' && (
-              <div className="cold-stage-shell">
-                <ColdStageOrb tone="gold" size="large" icon={<CreditCard size={44} color="var(--gold)" />} />
-                <div className="cold-stage-copy">
-                  <div className="cold-stage-title">Tap Your FC Card</div>
-                  <div className="cold-stage-subtitle">Hold the card near the top of your phone to authorize this cold-storage transfer.</div>
-                </div>
-                <div className="cold-stage-summary">
-                  <span>Sending</span>
-                  <strong>{coldSendAmount} {coldSendAsset}</strong>
-                  <small>{coldSendAddr}</small>
-                </div>
-                <div className="cold-stage-actions">
-                  <button type="button" className="cold-primary-cta gold" onClick={() => setColdSendStep('pin')}>Simulate NFC Tap</button>
-                  <button type="button" className="cold-secondary-cta" onClick={() => setColdSendStep('form')}>Cancel</button>
-                </div>
-              </div>
+              <NfcStage label="Sending" detail={`${coldSendAmount} ${coldSendAsset}`} onTap={() => setColdSendStep('pin')} onCancel={() => setColdSendStep('form')} />
             )}
 
             {coldSendStep === 'pin' && (
-              <div className="cold-stage-shell">
-                <div className="cold-verification-pill">
-                  <CheckCircle2 size={16} color="#10b981" />
-                  Card verified
-                </div>
-                <div className="cold-stage-copy">
-                  <div className="cold-stage-title">Enter PIN Code</div>
-                  <div className="cold-stage-subtitle">Complete the final hardware check with your 6-digit vault PIN.</div>
-                </div>
-                <div className="cold-pin-dots">
-                  {[0, 1, 2, 3, 4, 5].map((index) => (
-                    <div key={index} className={`cold-pin-dot ${coldPinInput.length > index ? 'filled' : ''}`}>
-                      {coldPinInput.length > index ? '•' : ''}
-                    </div>
+              <div className="cv-stage">
+                <div className="cv-verified-pill"><CheckCircle2 size={14} color="#10b981" /> Card verified</div>
+                <div className="cv-stage-title">Enter PIN</div>
+                <div className="cv-stage-desc">6-digit vault PIN</div>
+                <div className="cv-pin-dots">
+                  {[0,1,2,3,4,5].map(i => (
+                    <div key={i} className={`cv-pin-dot ${coldPinInput.length > i ? 'filled' : ''}`}>{coldPinInput.length > i ? '•' : ''}</div>
                   ))}
                 </div>
-                <div className="cold-pin-grid">
-                  {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map((key) => (
-                    <button
-                      key={key || 'empty'}
-                      type="button"
-                      className={`cold-pin-key ${key ? '' : 'blank'}`}
-                      onClick={() => {
-                        if (key === '⌫') setColdPinInput(value => value.slice(0, -1));
-                        else if (key && coldPinInput.length < 6) {
-                          const next = coldPinInput + key;
-                          setColdPinInput(next);
-                          if (next.length === 6) setTimeout(() => setColdSendStep('success'), 600);
-                        }
-                      }}
-                      disabled={!key}
-                    >
-                      {key}
-                    </button>
+                <div className="cv-pin-grid">
+                  {['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k => (
+                    <button key={k || 'empty'} type="button" className={`cv-pin-key ${k ? '' : 'blank'}`} disabled={!k} onClick={() => {
+                      if (k === '⌫') setColdPinInput(v => v.slice(0, -1));
+                      else if (k && coldPinInput.length < 6) {
+                        const next = coldPinInput + k;
+                        setColdPinInput(next);
+                        if (next.length === 6) setTimeout(() => setColdSendStep('success'), 600);
+                      }
+                    }}>{k}</button>
                   ))}
                 </div>
               </div>
             )}
 
             {coldSendStep === 'success' && (
-              <div className="cold-stage-shell">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12 }} className="cold-success-mark">
-                  <CheckCircle2 size={48} color="#10b981" />
-                </motion.div>
-                <div className="cold-stage-copy">
-                  <div className="cold-stage-title">Transaction Signed</div>
-                  <div className="cold-stage-subtitle">Broadcast to FC Chain successfully and queued in your cold-vault activity log.</div>
-                </div>
-                <div className="cold-stage-summary success">
-                  <span>Dispatch Record</span>
-                  <strong>-{coldSendAmount} {coldSendAsset}</strong>
-                  <small>{coldSendAddr}</small>
-                </div>
-                <div className="cold-stage-footnote">
-                  <span className="cold-stage-footnote-dot"></span>
-                  Signed with FC Black Card ····9201 • L2 Single Sign
-                </div>
-                <button type="button" className="cold-secondary-cta solid" onClick={() => { setColdView('main'); setColdSendStep('form'); setColdPinInput(''); }}>
-                  Done
-                </button>
-              </div>
+              <SuccessStage title="Transaction Signed" subtitle="Broadcast to FC Chain" detail={`-${coldSendAmount} ${coldSendAsset} → ${coldSendAddr.slice(0, 8)}...`} onDone={() => { setColdView('main'); setColdSendStep('form'); setColdPinInput(''); }} />
             )}
           </div>
-        )}
+        </>);
 
-        {/* ===== RECEIVE SUB-VIEW ===== */}
-        {coldView === 'receive' && (
-          <div className="cold-subview">
-            <ColdViewHeader
-              tone="green"
-              eyebrow="Receive to Vault"
-              title="Cold Vault Address"
-              subtitle="Scan, copy, or share the hardware-linked address for incoming funds."
-              badge="Hardware-linked destination"
-              onBack={() => setColdView('main')}
-            />
+      /* ---- RECEIVE ---- */
+      case 'receive':
+        return (<>
+          <CvBack title="Receive to Vault" onBack={() => setColdView('main')} />
+          <div className="cv-page">
+            <CvInfoBar items={[
+              { label: 'Route', value: 'Hardware' },
+              { label: 'Card', value: '····9201' },
+              { label: 'Chain', value: 'FC' },
+            ]} />
 
-            <div className="cold-receive-shell">
-              <div className="cold-receive-qr-card">
-                <svg viewBox="0 0 200 200" width="168" height="168">
+            <div className="cv-qr-wrap">
+              <div className="cv-qr-card">
+                <svg viewBox="0 0 200 200" width="140" height="140">
                   <rect x="10" y="10" width="50" height="50" rx="8" fill="#0f172a" />
                   <rect x="140" y="10" width="50" height="50" rx="8" fill="#0f172a" />
                   <rect x="10" y="140" width="50" height="50" rx="8" fill="#0f172a" />
@@ -469,486 +303,344 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
                   <rect x="156" y="26" width="18" height="18" rx="2" fill="#0f172a" />
                   <rect x="26" y="156" width="18" height="18" rx="2" fill="#0f172a" />
                   {[70,80,90,100,110,120,130].map((x,i) => [20,40,60,80,100,120,140,160].map((y,j) => (i+j)%3!==0 && <rect key={`${x}-${y}`} x={x} y={y} width="8" height="8" rx="1" fill="#0f172a" />))}
-                  {[20,40,60].map((x,i) => [70,90,110].map((y,j) => (i+j)%2===0 && <rect key={`b${x}-${y}`} x={x} y={y} width="8" height="8" rx="1" fill="#0f172a" />))}
-                  {[140,160].map((x,i) => [80,100,120,140].map((y,j) => (i+j)%2!==0 && <rect key={`c${x}-${y}`} x={x} y={y} width="8" height="8" rx="1" fill="#0f172a" />))}
                 </svg>
-                <div className="cold-receive-center-badge">FC</div>
+                <div className="cv-qr-badge">FC</div>
               </div>
-
-              <div className="cold-inline-badge green wide">Secure arrival route • FC Black Card ····9201</div>
             </div>
 
-            <div className="cold-panel">
-              <div className="cold-form-label">Cold Vault Address</div>
-              <div className="cold-address-card">{coldReceiveAddress}</div>
+            <div className="cv-card" style={{ padding: '12px 14px' }}>
+              <div className="cv-field-label">Cold Vault Address</div>
+              <div className="cv-address-text">{coldReceiveAddress}</div>
             </div>
 
-            <div className="cold-action-grid">
-              <button type="button" className={`cold-primary-cta green ${copiedAddr ? 'success' : ''}`} onClick={handleCopyColdAddress}>
-                {copiedAddr ? <><CheckCircle2 size={18} /> Copied!</> : <><Copy size={18} /> Copy Address</>}
+            <div className="cv-action-pair">
+              <button type="button" className={`cv-btn primary green ${copiedAddr ? 'success' : ''}`} onClick={handleCopy}>
+                {copiedAddr ? <><CheckCircle2 size={16} /> Copied</> : <><Copy size={16} /> Copy</>}
               </button>
-              <button type="button" className="cold-secondary-cta bordered" onClick={handleShareColdAddress}>
-                <Share2 size={18} />
-                Share Address
-              </button>
+              <button type="button" className="cv-btn ghost bordered" onClick={handleShare}><Share2 size={16} /> Share</button>
             </div>
 
-            <div className="cold-note-card blue">
-              <Shield size={16} color="#60a5fa" />
-              <div>
-                Funds received here land directly in hardware custody. Outbound movement still requires NFC tap plus local PIN confirmation.
-              </div>
+            <div className="cv-note blue">
+              <Shield size={14} color="#60a5fa" />
+              <span>Funds land in hardware custody. Outbound requires NFC + PIN.</span>
             </div>
           </div>
-        )}
+        </>);
 
-        {/* ===== SWAP SUB-VIEW ===== */}
-        {coldView === 'swap' && (
-          <div className="cold-subview">
-            <ColdViewHeader
-              tone="purple"
-              eyebrow="Vault Rebalance"
-              title="Cold Swap"
-              subtitle="Reallocate assets inside cold storage without exposing private keys to a hot environment."
-              badge="NFC approval required"
-              onBack={() => { setColdView('main'); setSwapStep('form'); setSwapAmount(''); }}
-            />
-
+      /* ---- SWAP ---- */
+      case 'swap':
+        return (<>
+          <CvBack title="Cold Swap" onBack={() => { setColdView('main'); setSwapStep('form'); setSwapAmount(''); }} />
+          <div className="cv-page">
             {swapStep === 'form' && (<>
-              <div className="cold-panel tonal-purple">
-                <div className="cold-form-label">From</div>
-                <div className="cold-chip-list wrap">
-                  {coldAssets.map((asset) => (
-                    <button
-                      key={asset.symbol}
-                      type="button"
-                      className={`cold-chip purple ${swapFrom === asset.symbol ? 'active' : ''}`}
-                      onClick={() => {
-                        setSwapFrom(asset.symbol);
-                        if (asset.symbol === swapTo) setSwapTo(coldAssets.find(x => x.symbol !== asset.symbol)?.symbol || 'FCUSD');
-                      }}
-                    >
-                      <span>{asset.icon}</span>
-                      {asset.symbol}
+              <CvInfoBar items={[
+                { label: 'From', value: swapFrom },
+                { label: 'To', value: swapTo },
+                { label: 'Approval', value: 'NFC' },
+              ]} />
+
+              <div className="cv-card" style={{ padding: '14px' }}>
+                <div className="cv-field-label">From</div>
+                <div className="cv-chip-row wrap">
+                  {coldAssets.map(a => (
+                    <button key={a.symbol} type="button" className={`cv-chip ${swapFrom === a.symbol ? 'active purple' : ''}`} onClick={() => { setSwapFrom(a.symbol); if (a.symbol === swapTo) setSwapTo(coldAssets.find(x => x.symbol !== a.symbol)?.symbol || 'FCUSD'); }}>
+                      <span>{a.icon}</span> {a.symbol}
                     </button>
                   ))}
                 </div>
-                <div className="cold-amount-shell swap">
-                  <input
-                    type="text"
-                    value={swapAmount}
-                    onChange={e => setSwapAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="cold-form-input cold-form-amount cold-mono"
-                  />
-                  <span className="cold-amount-suffix">{swapFrom}</span>
+                <div className="cv-input-row" style={{ marginTop: 10 }}>
+                  <input type="text" value={swapAmount} onChange={e => setSwapAmount(e.target.value)} placeholder="0.00" className="cv-input mono amount" />
+                  <span className="cv-input-unit">{swapFrom}</span>
                 </div>
-                <div className="cold-form-note">Available: {swapFromAsset?.balance || '0'} {swapFrom}</div>
+                <div className="cv-field-hint">Available: {swapFromAsset?.balance || '0'} {swapFrom}</div>
               </div>
 
-              <div className="cold-swap-toggle-wrap">
-                <button
-                  type="button"
-                  className="cold-swap-toggle"
-                  onClick={() => { const next = swapFrom; setSwapFrom(swapTo); setSwapTo(next); }}
-                >
-                  <ArrowRightLeft size={18} color="#c4b5fd" style={{ transform: 'rotate(90deg)' }} />
+              <div className="cv-swap-arrow">
+                <button type="button" className="cv-swap-toggle" onClick={() => { const n = swapFrom; setSwapFrom(swapTo); setSwapTo(n); }}>
+                  <ArrowRightLeft size={16} color="#c4b5fd" style={{ transform: 'rotate(90deg)' }} />
                 </button>
               </div>
 
-              <div className="cold-panel">
-                <div className="cold-form-label">To</div>
-                <div className="cold-chip-list wrap">
-                  {swapTargetAssets.map((asset) => (
-                    <button
-                      key={asset.symbol}
-                      type="button"
-                      className={`cold-chip green ${swapTo === asset.symbol ? 'active' : ''}`}
-                      onClick={() => setSwapTo(asset.symbol)}
-                    >
-                      <span>{asset.icon}</span>
-                      {asset.symbol}
+              <div className="cv-card" style={{ padding: '14px' }}>
+                <div className="cv-field-label">To</div>
+                <div className="cv-chip-row wrap">
+                  {swapTargetAssets.map(a => (
+                    <button key={a.symbol} type="button" className={`cv-chip ${swapTo === a.symbol ? 'active green' : ''}`} onClick={() => setSwapTo(a.symbol)}>
+                      <span>{a.icon}</span> {a.symbol}
                     </button>
                   ))}
                 </div>
-                <div className="cold-quote-card">
-                  <div className="cold-quote-value">{swapAmount ? `≈ ${coldSwapQuote}` : '—'}</div>
-                  <div className="cold-quote-symbol">{swapTo}</div>
+                <div className="cv-quote-row">
+                  <span className="cv-quote-value">{swapAmount ? `≈ ${coldSwapQuote}` : '—'}</span>
+                  <span className="cv-quote-symbol">{swapTo}</span>
                 </div>
               </div>
 
               {swapAmount && (
-                <div className="cold-rate-card">
-                  <div className="cold-rate-row">
-                    <span>Exchange Rate</span>
-                    <strong>1 {swapFrom} = {coldSwapRate > 1000 ? coldSwapRate.toFixed(0) : coldSwapRate.toFixed(4)} {swapTo}</strong>
-                  </div>
-                  <div className="cold-rate-row">
-                    <span>Slippage</span>
-                    <strong className="positive">0.1%</strong>
-                  </div>
-                  <div className="cold-rate-row">
-                    <span>Network Fee</span>
-                    <strong>~$0.02 (FC Chain)</strong>
-                  </div>
+                <div className="cv-card" style={{ padding: '12px 14px' }}>
+                  <div className="cv-rate-line"><span>Rate</span><strong>1 {swapFrom} = {coldSwapRate > 1000 ? coldSwapRate.toFixed(0) : coldSwapRate.toFixed(4)} {swapTo}</strong></div>
+                  <div className="cv-rate-line"><span>Slippage</span><strong className="positive">0.1%</strong></div>
+                  <div className="cv-rate-line"><span>Fee</span><strong>~$0.02</strong></div>
                 </div>
               )}
 
-              <div className="cold-note-card purple">
-                <Shield size={16} color="#c4b5fd" />
-                <div>
-                  Swap execution stays inside cold custody. Confirmation still requires FC card tap and local authorization before settlement.
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className={`cold-primary-cta purple ${swapReady ? '' : 'disabled'}`}
-                onClick={() => { if (swapReady) setSwapStep('nfc'); }}
-              >
-                <ArrowRightLeft size={20} />
-                Review Swap
+              <button type="button" className={`cv-btn primary purple full ${swapReady ? '' : 'disabled'}`} onClick={() => { if (swapReady) setSwapStep('nfc'); }}>
+                <ArrowRightLeft size={18} /> Review Swap
               </button>
             </>)}
 
             {swapStep === 'nfc' && (
-              <div className="cold-stage-shell">
-                <div className="cold-stage-summary">
-                  <span>Swap Preview</span>
-                  <strong>-{swapAmount} {swapFrom}</strong>
-                  <small>Estimated return +{coldSwapQuote} {swapTo}</small>
-                </div>
-                <ColdStageOrb tone="purple" icon={<CreditCard size={40} color="#c4b5fd" />} />
-                <div className="cold-stage-copy">
-                  <div className="cold-stage-title">Tap to Confirm Swap</div>
-                  <div className="cold-stage-subtitle">Hold your FC card near the phone to approve the rebalance inside cold storage.</div>
-                </div>
-                <div className="cold-stage-actions">
-                  <button type="button" className="cold-primary-cta purple" onClick={() => setSwapStep('success')}>Simulate NFC Tap</button>
-                  <button type="button" className="cold-secondary-cta" onClick={() => setSwapStep('form')}>Cancel</button>
-                </div>
-              </div>
+              <NfcStage tone="purple" label="Swap" detail={`${swapAmount} ${swapFrom} → ${coldSwapQuote} ${swapTo}`} onTap={() => setSwapStep('success')} onCancel={() => setSwapStep('form')} />
             )}
 
             {swapStep === 'success' && (
-              <div className="cold-stage-shell">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12 }} className="cold-success-mark">
-                  <CheckCircle2 size={48} color="#10b981" />
-                </motion.div>
-                <div className="cold-stage-copy">
-                  <div className="cold-stage-title">Swap Complete</div>
-                  <div className="cold-stage-subtitle">The rebalance settled on FC Chain DEX and remains fully under hardware custody.</div>
-                </div>
-                <div className="cold-stage-summary success">
-                  <span>Settlement Record</span>
-                  <strong>-{swapAmount} {swapFrom}</strong>
-                  <small>Received +{coldSwapQuote} {swapTo}</small>
-                </div>
-                <div className="cold-stage-footnote">
-                  <span className="cold-stage-footnote-dot"></span>
-                  Signed with FC Card ····9201 • L2 Single Sign
-                </div>
-                <button type="button" className="cold-secondary-cta solid" onClick={() => { setColdView('main'); setSwapStep('form'); setSwapAmount(''); }}>
-                  Done
-                </button>
-              </div>
+              <SuccessStage title="Swap Complete" subtitle="Settled on FC Chain DEX" detail={`-${swapAmount} ${swapFrom} → +${coldSwapQuote} ${swapTo}`} onDone={() => { setColdView('main'); setSwapStep('form'); setSwapAmount(''); }} />
             )}
           </div>
-        )}
+        </>);
 
-        {/* ===== ACTIVITY FULL VIEW ===== */}
-        {coldView === 'activity' && (
-          <div className="cold-subview">
-            <ColdViewHeader
-              tone="gold"
-              eyebrow="Audit Trail"
-              title="Cold Vault Activity"
-              subtitle="Review every hardware-signed movement across your protected assets."
-              badge={`${filteredActivityTransactions.length} records shown`}
-              onBack={() => setColdView('main')}
-            />
+      /* ---- ACTIVITY FULL ---- */
+      case 'activity':
+        return (<>
+          <CvBack title="Vault Activity" onBack={() => setColdView('main')} />
+          <div className="cv-page">
+            <CvInfoBar items={[
+              { label: 'Records', value: extendedColdTransactions.length },
+              { label: 'L3 Signs', value: extendedColdTransactions.filter(t => t.level === 'L3').length },
+              { label: 'Latest', value: extendedColdTransactions[0]?.time || '—' },
+            ]} />
 
-            <div className="cold-activity-stats">
-              <div className="cold-activity-stat">
-                <span>Total Records</span>
-                <strong>{extendedColdTransactions.length}</strong>
-              </div>
-              <div className="cold-activity-stat">
-                <span>L3 Approvals</span>
-                <strong>{extendedColdTransactions.filter(tx => tx.level === 'L3').length}</strong>
-              </div>
-              <div className="cold-activity-stat">
-                <span>Latest Event</span>
-                <strong>{extendedColdTransactions[0]?.time || 'Now'}</strong>
-              </div>
-            </div>
-
-            <div className="cold-filter-row">
-              {['All', 'Sent', 'Received', 'Swapped'].map((filter) => (
-                <button
-                  key={filter}
-                  type="button"
-                  className={`cold-filter-pill ${activityFilter === filter ? 'active gold' : ''}`}
-                  onClick={() => setActivityFilter(filter)}
-                >
-                  {filter}
-                </button>
+            <div className="cv-chip-row">
+              {['All', 'Sent', 'Received', 'Swapped'].map(f => (
+                <button key={f} type="button" className={`cv-chip ${activityFilter === f ? 'active' : ''}`} onClick={() => setActivityFilter(f)}>{f}</button>
               ))}
             </div>
 
-            <div className="cold-activity-list">
-              {filteredActivityTransactions.map((tx, idx) => (
-                <div key={`${tx.time}-${tx.asset}-${idx}`}>
-                  <ColdActivityRow tx={tx} />
-                  {idx < filteredActivityTransactions.length - 1 ? <div className="cold-activity-divider"></div> : null}
-                </div>
+            <div className="cv-card">
+              {filteredActivity.map((tx, i) => (
+                <React.Fragment key={`${tx.time}-${tx.asset}-${i}`}>
+                  <CvActivityRow tx={tx} />
+                  {i < filteredActivity.length - 1 && <CvDivider />}
+                </React.Fragment>
               ))}
             </div>
 
-            <button type="button" className="cold-secondary-cta bordered full">
-              <FileText size={16} />
-              Export Transaction History
-            </button>
+            <button type="button" className="cv-btn ghost bordered full"><FileText size={14} /> Export History</button>
           </div>
-        )}
+        </>);
 
-        {/* ===== ASSET DETAIL VIEW ===== */}
-        {coldView === 'assetDetail' && selectedAsset && (
-          <div className="cold-subview">
-            <ColdViewHeader
-              tone="blue"
-              eyebrow="Asset Deep Dive"
-              title={selectedAsset.name}
-              subtitle={`${selectedAsset.symbol} stored inside hardware custody with NFC-only outbound movement.`}
-              badge={`${selectedAsset.symbol} • Cold storage`}
-              onBack={() => { setColdView('main'); setSelectedAsset(null); }}
-            />
-
-            <div className="cold-asset-hero">
-              <div className="cold-asset-token" style={{ background: `${selectedAsset.color}18`, borderColor: `${selectedAsset.color}35`, color: selectedAsset.color }}>
-                {selectedAsset.icon}
-              </div>
-              <div className="cold-asset-balance">{selectedAsset.balance}</div>
-              <div className="cold-asset-symbol">{selectedAsset.symbol}</div>
-              <div className="cold-asset-meta-row">
-                <div className="cold-asset-meta-card">
-                  <span>Value</span>
-                  <strong>{selectedAsset.fiat}</strong>
-                </div>
-                <div className="cold-asset-meta-card">
-                  <span>24H</span>
-                  <strong style={{ color: selectedAsset.positive ? '#34d399' : '#fca5a5' }}>{selectedAsset.change}</strong>
-                </div>
-              </div>
+      /* ---- ASSET DETAIL ---- */
+      case 'assetDetail':
+        if (!selectedAsset) return null;
+        return (<>
+          <CvBack title={selectedAsset.name} onBack={() => { setColdView('main'); setSelectedAsset(null); }} />
+          <div className="cv-page">
+            <div className="cv-asset-hero">
+              <div className="cv-token large" style={{ background: `${selectedAsset.color}18`, color: selectedAsset.color }}>{selectedAsset.icon}</div>
+              <div className="cv-asset-bal">{selectedAsset.balance} <span>{selectedAsset.symbol}</span></div>
+              <CvInfoBar items={[
+                { label: 'Value', value: selectedAsset.fiat },
+                { label: '24H', value: selectedAsset.change, color: selectedAsset.positive ? '#34d399' : '#fca5a5' },
+                { label: 'Storage', value: 'Cold' },
+              ]} />
             </div>
 
-            <div className="cold-panel">
-              <div className="cold-chart-head">
-                <span>Price Chart</span>
-                <div className="cold-mini-tabs">
-                  {['1D', '1W', '1M', '1Y'].map((period) => (
-                    <span key={period} className={period === '1W' ? 'active' : ''}>{period}</span>
-                  ))}
-                </div>
+            {/* Mini chart */}
+            <div className="cv-card" style={{ padding: '12px 14px' }}>
+              <div className="cv-chart-head"><span>Price</span>
+                <div className="cv-mini-tabs">{['1D','1W','1M','1Y'].map(p => <span key={p} className={p === '1W' ? 'active' : ''}>{p}</span>)}</div>
               </div>
-              <svg viewBox="0 0 300 80" style={{ width: '100%', height: '80px' }}>
-                <defs>
-                  <linearGradient id={`grad-${selectedAsset.symbol}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={selectedAsset.color} stopOpacity="0.3" />
-                    <stop offset="100%" stopColor={selectedAsset.color} stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d={selectedAsset.positive ? 'M0,60 C30,55 60,50 90,40 C120,30 150,45 180,35 C210,25 240,30 270,20 L300,15 L300,80 L0,80 Z' : 'M0,30 C30,35 60,25 90,40 C120,50 150,35 180,45 C210,55 240,50 270,60 L300,65 L300,80 L0,80 Z'} fill={`url(#grad-${selectedAsset.symbol})`} />
-                <path d={selectedAsset.positive ? 'M0,60 C30,55 60,50 90,40 C120,30 150,45 180,35 C210,25 240,30 270,20 L300,15' : 'M0,30 C30,35 60,25 90,40 C120,50 150,35 180,45 C210,55 240,50 270,60 L300,65'} fill="none" stroke={selectedAsset.color} strokeWidth="2.5" />
+              <svg viewBox="0 0 300 60" style={{ width: '100%', height: '60px' }}>
+                <defs><linearGradient id={`cg-${selectedAsset.symbol}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={selectedAsset.color} stopOpacity="0.25" /><stop offset="100%" stopColor={selectedAsset.color} stopOpacity="0" /></linearGradient></defs>
+                <path d={selectedAsset.positive ? 'M0,45 C50,40 100,30 150,25 C200,20 250,22 300,12 L300,60 L0,60 Z' : 'M0,20 C50,25 100,35 150,30 C200,40 250,45 300,50 L300,60 L0,60 Z'} fill={`url(#cg-${selectedAsset.symbol})`} />
+                <path d={selectedAsset.positive ? 'M0,45 C50,40 100,30 150,25 C200,20 250,22 300,12' : 'M0,20 C50,25 100,35 150,30 C200,40 250,45 300,50'} fill="none" stroke={selectedAsset.color} strokeWidth="2" />
               </svg>
             </div>
 
-            <div className="cold-asset-actions">
-              <button
-                type="button"
-                className="cold-main-action blue"
-                onClick={() => {
-                  setColdView('send');
-                  setColdSendAsset(['FCUSD', 'FCC', 'BTC', 'ETH'].includes(selectedAsset.symbol) ? selectedAsset.symbol : 'FCUSD');
-                  setColdSendStep('form');
-                }}
-              >
-                <div className="cold-main-action-icon"><ArrowUp size={18} /></div>
-                <div className="cold-main-action-copy"><span>Send</span><small>Move out securely</small></div>
+            {/* Quick actions */}
+            <div className="cv-action-trio">
+              <button type="button" className="cv-action-btn blue" onClick={() => { setColdView('send'); setColdSendAsset(['FCUSD','FCC','BTC','ETH'].includes(selectedAsset.symbol) ? selectedAsset.symbol : 'FCUSD'); setColdSendStep('form'); }}>
+                <ArrowUp size={16} /><span>Send</span>
               </button>
-              <button type="button" className="cold-main-action green" onClick={() => { setColdView('receive'); }}>
-                <div className="cold-main-action-icon"><ArrowDown size={18} /></div>
-                <div className="cold-main-action-copy"><span>Receive</span><small>Share vault route</small></div>
+              <button type="button" className="cv-action-btn green" onClick={() => setColdView('receive')}>
+                <ArrowDown size={16} /><span>Receive</span>
               </button>
-              <button type="button" className="cold-main-action purple" onClick={() => { setColdView('swap'); setSwapFrom(selectedAsset.symbol); }}>
-                <div className="cold-main-action-icon"><ArrowRightLeft size={18} /></div>
-                <div className="cold-main-action-copy"><span>Swap</span><small>Rebalance position</small></div>
+              <button type="button" className="cv-action-btn purple" onClick={() => { setColdView('swap'); setSwapFrom(selectedAsset.symbol); }}>
+                <ArrowRightLeft size={16} /><span>Swap</span>
               </button>
             </div>
 
-            <div className="cold-panel">
-              <div className="cold-chart-head">
-                <span>Recent {selectedAsset.symbol} Activity</span>
-                <span>{selectedAssetTransactions.length} records</span>
-              </div>
-              <div className="cold-activity-list embedded">
-                {selectedAssetTransactions.length > 0 ? (
-                  selectedAssetTransactions.map((tx, idx) => (
-                    <div key={`${tx.time}-${tx.asset}-${idx}`}>
-                      <ColdActivityRow tx={tx} />
-                      {idx < selectedAssetTransactions.length - 1 ? <div className="cold-activity-divider"></div> : null}
-                    </div>
-                  ))
-                ) : (
-                  <div className="cold-empty-state">No recent {selectedAsset.symbol} transactions</div>
-                )}
-              </div>
-            </div>
-
-            <div className="cold-note-card" style={{ borderColor: `${selectedAsset.color}22` }}>
-              <Shield size={18} color={selectedAsset.color} />
-              <div>
-                This {selectedAsset.name} position is sealed inside the FC Black Card secure element. Every outbound action still requires hardware tap and local authorization.
-              </div>
+            {/* Asset activity */}
+            <div className="cv-section-label">RECENT {selectedAsset.symbol} ACTIVITY</div>
+            <div className="cv-card">
+              {selectedAssetTxs.length > 0 ? selectedAssetTxs.map((tx, i) => (
+                <React.Fragment key={`${tx.time}-${tx.asset}-${i}`}>
+                  <CvActivityRow tx={tx} />
+                  {i < selectedAssetTxs.length - 1 && <CvDivider />}
+                </React.Fragment>
+              )) : <div className="cv-empty">No recent {selectedAsset.symbol} transactions</div>}
             </div>
           </div>
-        )}
+        </>);
 
-        {/* ===== MAIN VIEW ===== */}
-        {coldView === 'main' && (<>
-        <div className="cold-hero-card">
-          <div className="cold-hero-top">
-            <div>
-              <div className="cold-hero-kicker">DEEP STORAGE BALANCE</div>
-              <div className="cold-hero-balance">{totalColdBalance}</div>
+      default: return null;
+    }
+  };
+
+  /* ============================================================
+     MAIN RENDER
+     ============================================================ */
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3 }}
+      className="cold-vault-overlay"
+      style={{ background: '#0d0d0f', display: 'flex', flexDirection: 'column' }}
+    >
+      {/* NFC Tap Modal */}
+      {showNfcModal && (
+        <div className="cv-nfc-overlay">
+          <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2, repeat: Infinity }} className="cv-stage-orb gold" style={{ width: 120, height: 120 }}>
+            <CreditCard size={40} color="var(--gold)" />
+          </motion.div>
+          <div className="cv-stage-title">Tap Your FC Card</div>
+          <div className="cv-stage-desc">Hold card near the top of phone</div>
+          <button type="button" className="cv-btn ghost" onClick={() => { setShowNfcModal(false); setCardConnected(true); }}>Cancel</button>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="cv-header">
+        <div className="cv-header-brand">
+          <div className="cv-header-icon"><Shield size={16} color="var(--gold)" /></div>
+          <div>
+            <div className="cv-header-title">Cold Vault</div>
+            <div className="cv-header-sub">FC Black Card ····9201</div>
+          </div>
+        </div>
+        <div className="cv-header-right">
+          <button type="button" className={`cv-conn-chip ${cardConnected ? 'on' : 'off'}`} onClick={() => { if (!cardConnected) setShowNfcModal(true); }}>
+            <span className="cv-conn-dot"></span>
+            {cardConnected ? 'Ready' : 'Tap card'}
+          </button>
+          <button type="button" className="cv-close" onClick={onClose}><X size={16} color="var(--text-secondary)" /></button>
+        </div>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="cv-scroll">
+        {coldView !== 'main' ? (
+          <>
+            {renderSubView()}
+            <div style={{ height: 30 }}></div>
+          </>
+        ) : (<>
+
+          {/* Balance strip */}
+          <div className="cv-balance-strip">
+            <div className="cv-balance-label">DEEP STORAGE</div>
+            <div className="cv-balance-value">{totalColdBalance}</div>
+            <div className="cv-balance-change">
+              <span className="positive">+$4,280.50 (24h)</span>
+              <span className="cv-balance-pct">92.4% of net worth</span>
             </div>
-            <button
-              type="button"
-              className={`cold-hero-status ${cardConnected ? 'connected' : 'disconnected'}`}
-              onClick={() => { if (!cardConnected) setShowNfcModal(true); }}
-            >
-              <span className="cold-hero-status-dot"></span>
-              {cardConnected ? 'Card Connected' : 'Tap to Connect'}
+          </div>
+
+          <CvInfoBar items={[
+            { label: 'Assets', value: `${coldAssets.length} tokens` },
+            { label: 'Cards', value: `${backupCards.filter(c => c.status !== 'empty').length} paired` },
+            { label: 'Policy', value: '4 levels' },
+          ]} />
+
+          {/* Action buttons */}
+          <div className="cv-action-trio">
+            <button type="button" className="cv-action-btn blue" onClick={() => { setColdView('send'); setColdSendStep('form'); setColdSendAddr(''); setColdSendAmount(''); setColdPinInput(''); }}>
+              <ArrowUp size={18} /><span>Send</span><small>NFC sign</small>
+            </button>
+            <button type="button" className="cv-action-btn green" onClick={() => { setColdView('receive'); setCopiedAddr(false); }}>
+              <ArrowDown size={18} /><span>Receive</span><small>Vault addr</small>
+            </button>
+            <button type="button" className="cv-action-btn purple" onClick={() => { setColdView('swap'); setSwapStep('form'); setSwapAmount(''); }}>
+              <ArrowRightLeft size={18} /><span>Swap</span><small>Rebalance</small>
             </button>
           </div>
 
-          <div className="cold-hero-subcopy">
-            Hardware-isolated custody with NFC signing, backup card redundancy, and policy-based approvals.
-          </div>
-
-          <div className="cold-hero-change-row">
-            <span className="cold-hero-change positive">+$4,280.50 (24h)</span>
-            <span className="cold-hero-muted">92.4% of protected net worth</span>
-          </div>
-
-          <div className="cold-hero-grid">
-            <div className="cold-hero-stat">
-              <span>Protected Assets</span>
-              <strong>{coldAssets.length} tokens</strong>
-            </div>
-            <div className="cold-hero-stat">
-              <span>Backup Cards</span>
-              <strong>{backupCards.filter(card => card.status !== 'empty').length} paired</strong>
-            </div>
-            <div className="cold-hero-stat">
-              <span>Signing Policy</span>
-              <strong>4 levels active</strong>
+          {/* Cold Assets */}
+          <div className="cv-section">
+            <div className="cv-section-label">COLD ASSETS</div>
+            <div className="cv-card">
+              {coldAssets.map((a, i) => (
+                <React.Fragment key={a.symbol}>
+                  <CvAssetRow asset={a} onClick={() => { setSelectedAsset(a); setColdView('assetDetail'); }} />
+                  {i < coldAssets.length - 1 && <CvDivider />}
+                </React.Fragment>
+              ))}
             </div>
           </div>
-        </div>
 
-        <div className="cold-main-actions">
-          {[
-            { icon: <ArrowUp size={20} />, label: 'Send', detail: 'NFC signature', tone: 'blue', action: () => { setColdView('send'); setColdSendStep('form'); setColdSendAddr(''); setColdSendAmount(''); setColdPinInput(''); } },
-            { icon: <ArrowDown size={20} />, label: 'Receive', detail: 'Share vault address', tone: 'green', action: () => { setColdView('receive'); setCopiedAddr(false); } },
-            { icon: <ArrowRightLeft size={20} />, label: 'Swap', detail: 'Rebalance offline', tone: 'purple', action: () => { setColdView('swap'); setSwapStep('form'); setSwapAmount(''); } },
-          ].map((act) => (
-            <button key={act.label} type="button" className={`cold-main-action ${act.tone}`} onClick={act.action}>
-              <div className="cold-main-action-icon">{act.icon}</div>
-              <div className="cold-main-action-copy">
-                <span>{act.label}</span>
-                <small>{act.detail}</small>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Cold Assets List */}
-        <div className="cold-stack-section">
-          <ColdSectionHeader label="Cold Assets" meta={`${coldAssets.length} protected positions`} />
-          <div className="cold-list-shell">
-            {coldAssets.map((asset, idx) => (
-              <div key={asset.symbol}>
-                <ColdVaultAssetRow asset={asset} onClick={() => { setSelectedAsset(asset); setColdView('assetDetail'); }} />
-                {idx < coldAssets.length - 1 ? <div className="cold-activity-divider"></div> : null}
-              </div>
-            ))}
+          {/* Backup Cards */}
+          <div className="cv-section">
+            <div className="cv-section-label">BACKUP CARDS</div>
+            <div className="cv-card">
+              {backupCards.map((c, i) => (
+                <React.Fragment key={c.id}>
+                  <CvCardRow card={c} />
+                  {i < backupCards.length - 1 && <CvDivider />}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Card Management */}
-        <div className="cold-stack-section">
-          <ColdSectionHeader label="Backup Cards" meta="Redundancy and recovery posture" />
-          <div className="cold-stack">
-            {backupCards.map((card) => (
-              <ColdBackupCardRow key={card.id} card={card} />
-            ))}
+          {/* Security */}
+          <div className="cv-section">
+            <div className="cv-section-label">SECURITY</div>
+            <div className="cv-card">
+              {securityItems.map((item, i) => (
+                <React.Fragment key={item.label}>
+                  <CvRow icon={item.icon} label={item.label} right={<span style={{ fontSize: 12, fontWeight: 600, color: item.vColor }}>{item.value}</span>} onClick={item.action} />
+                  {i < securityItems.length - 1 && <CvDivider />}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Security Quick Panel */}
-        <div className="cold-stack-section">
-          <ColdSectionHeader label="Security" meta="Active protection layers and signer controls" />
-          <div className="cold-list-shell">
-            {securityItems.map((item, idx) => (
-              <div key={item.label}>
-                <ColdSecurityRow item={item} onClick={item.action} />
-                {idx < securityItems.length - 1 ? <div className="cold-activity-divider"></div> : null}
-              </div>
-            ))}
+          {/* Recent Activity */}
+          <div className="cv-section">
+            <div className="cv-section-head">
+              <div className="cv-section-label">RECENT ACTIVITY</div>
+              <button type="button" className="cv-link" onClick={() => setColdView('activity')}>View All</button>
+            </div>
+            <div className="cv-card">
+              {coldTransactions.map((tx, i) => (
+                <React.Fragment key={`${tx.time}-${tx.asset}-${i}`}>
+                  <CvActivityRow tx={tx} />
+                  {i < coldTransactions.length - 1 && <CvDivider />}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Recent Transactions */}
-        <div className="cold-stack-section">
-          <ColdSectionHeader label="Recent Activity" meta="Latest vault movement" actionLabel="View All" onAction={() => setColdView('activity')} />
-          <div className="cold-activity-list">
-            {coldTransactions.map((tx, idx) => (
-              <div key={`${tx.time}-${tx.asset}-${idx}`}>
-                <ColdActivityRow tx={tx} />
-                {idx < coldTransactions.length - 1 ? <div className="cold-activity-divider"></div> : null}
-              </div>
-            ))}
+          {/* Seedless & Recovery */}
+          <div className="cv-section">
+            <div className="cv-note purple">
+              <Database size={14} color="#c4b5fd" />
+              <span>Seedless architecture — keys live in EAL6+ secure element. Recovery via card redundancy.</span>
+            </div>
+            <div className="cv-action-pair">
+              <button type="button" className="cv-btn ghost bordered">Export Seed</button>
+              <button type="button" className="cv-btn ghost bordered">Import Seed</button>
+            </div>
           </div>
-        </div>
 
-        {/* Seedless Info */}
-        <div className="cold-seedless-card">
-          <div className="cold-seedless-head">
-            <Database size={18} color="#c4b5fd" />
-            <span>Seedless Architecture</span>
-          </div>
-          <div className="cold-seedless-copy">
-            Your private keys are generated and stored exclusively within the FC card&apos;s EAL6+ secure element. Keys never leave the chip, so recovery is handled through card redundancy instead of a seed phrase.
-          </div>
-          <div className="cold-action-grid">
-            <button type="button" className="cold-secondary-cta purple-soft">Export Seed (Optional)</button>
-            <button type="button" className="cold-secondary-cta bordered subdued">Import Seed</button>
-          </div>
-        </div>
+          <button type="button" className="cv-btn danger-link">Factory Reset Card</button>
 
-        {/* Factory Reset */}
-        <button type="button" className="cold-danger-cta">
-          Factory Reset Card
-        </button>
-
+          <div style={{ height: 40 }}></div>
         </>)}
-
       </div>
     </motion.div>
   );
 };
-
-// --- Global Biometric Gate Component ---
 
 export default ColdVaultModule;

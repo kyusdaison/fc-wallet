@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Building2,
   FileText,
-  Users,
   TrendingUp,
   Shield,
   Check,
@@ -15,31 +14,20 @@ import {
 import { ORG_CHARTER, ORG_EQUITY, ORG_REVENUE, ORG_CREDENTIALS } from '../data/mockData';
 
 const OrgServicesModule = () => {
-  const containerVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -20 },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
-
   const getCredentialIcon = (type) => {
     switch (type) {
       case 'license':
-        return <FileText size={18} />;
+        return <FileText size={14} />;
       case 'tax':
-        return <DollarSign size={18} />;
+        return <DollarSign size={14} />;
       case 'compliance':
-        return <Shield size={18} />;
+        return <Shield size={14} />;
       case 'data':
-        return <Shield size={18} />;
+        return <Shield size={14} />;
       case 'trade':
-        return <Building2 size={18} />;
+        return <Building2 size={14} />;
       default:
-        return <Check size={18} />;
+        return <Check size={14} />;
     }
   };
 
@@ -59,480 +47,201 @@ const OrgServicesModule = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'active':
-        return <Check size={14} />;
+        return <Check size={12} />;
       case 'pending_renewal':
-        return <AlertCircle size={14} />;
+        return <AlertCircle size={12} />;
       case 'expired':
-        return <AlertCircle size={14} />;
+        return <AlertCircle size={12} />;
       default:
-        return <Clock size={14} />;
+        return <Clock size={12} />;
     }
   };
 
   return (
     <motion.div
-      className="module-content services-shell"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
+      className="os-page"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
-      {/* Hero Section */}
-      <motion.div
-        className="services-hero"
-        style={{
-          background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%)',
-          borderLeft: '3px solid var(--gold)',
-          borderRadius: '12px',
-          padding: '24px 20px',
-          marginBottom: '24px',
-        }}
-        variants={itemVariants}
-      >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-          <Building2
-            size={28}
-            style={{ color: 'var(--gold)', flexShrink: 0, marginTop: '2px' }}
-          />
-          <div style={{ flex: 1 }}>
-            <p style={{ color: 'var(--gold)', fontSize: '12px', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>
-              ENTERPRISE REGISTRY
-            </p>
-            <h2 style={{ color: 'var(--text-primary)', fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
-              Corporate Governance
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5', marginBottom: '12px' }}>
-              Charter, equity structure, and regulatory credentials for NexaCorp Limited
-            </p>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <span
-                style={{
-                  background: 'var(--gold)',
-                  color: '#000',
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                4 Items
-              </span>
-            </div>
-          </div>
+      {/* ========== HEADER ========== */}
+      <div className="os-header">
+        <div>
+          <div className="os-header-title">Enterprise Registry</div>
+          <div className="os-header-subtitle">Charter, equity & credentials · NexaCorp Limited</div>
         </div>
-      </motion.div>
+        <div className="os-header-badge">
+          <Building2 size={12} />
+          4 Items
+        </div>
+      </div>
 
-      {/* Company Charter NFT Card */}
-      <motion.div
-        className="glass-card"
-        style={{
-          borderColor: 'var(--gold)',
-          borderWidth: '1.5px',
-          marginBottom: '24px',
-          overflow: 'hidden',
-        }}
-        variants={itemVariants}
-      >
-        <div style={{ padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <FileText size={20} style={{ color: 'var(--gold)' }} />
-            <h3 style={{ color: 'var(--text-primary)', fontSize: '16px', fontWeight: '600' }}>
-              Company Charter NFT
-            </h3>
-          </div>
-
-          {/* Charter Content */}
-          <div style={{ backgroundColor: 'var(--surface-2)', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  Entity Name
-                </p>
-                <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                  {ORG_CHARTER.entityName}
-                </p>
-              </div>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  Entity ID
-                </p>
-                <p style={{ color: 'var(--gold)', fontSize: '14px', fontWeight: '600', fontFamily: 'monospace' }}>
-                  {ORG_CHARTER.entityId}
-                </p>
-              </div>
+      {/* ========== COMPANY CHARTER ========== */}
+      <div className="os-section">
+        <div className="os-label">COMPANY CHARTER</div>
+        <div className="os-card">
+          <div className="os-grid">
+            <div className="os-kv">
+              <span>Entity</span>
+              <strong>{ORG_CHARTER.entityName}</strong>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  Registration Date
-                </p>
-                <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                  {ORG_CHARTER.registrationDate}
-                </p>
-              </div>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  Jurisdiction
-                </p>
-                <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                  {ORG_CHARTER.jurisdiction}
-                </p>
-              </div>
+            <div className="os-kv">
+              <span>Entity ID</span>
+              <strong className="os-mono">{ORG_CHARTER.entityId}</strong>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  NFT ID
-                </p>
-                <p style={{ color: 'var(--gold)', fontSize: '13px', fontWeight: '600', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                  {ORG_CHARTER.charterNft}
-                </p>
-              </div>
-              <div>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                  Company Type
-                </p>
-                <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                  {ORG_CHARTER.type}
-                </p>
-              </div>
+            <div className="os-kv">
+              <span>Registration Date</span>
+              <strong>{ORG_CHARTER.registrationDate}</strong>
+            </div>
+            <div className="os-kv">
+              <span>Jurisdiction</span>
+              <strong>{ORG_CHARTER.jurisdiction}</strong>
+            </div>
+            <div className="os-kv">
+              <span>NFT ID</span>
+              <strong className="os-mono">{ORG_CHARTER.charterNft}</strong>
+            </div>
+            <div className="os-kv">
+              <span>Company Type</span>
+              <strong>{ORG_CHARTER.type}</strong>
+            </div>
+            <div className="os-kv">
+              <span>Registered Agent</span>
+              <strong>{ORG_CHARTER.registeredAgent}</strong>
+            </div>
+            <div className="os-kv">
+              <span>Annual Filing</span>
+              <strong>{ORG_CHARTER.annualFiling}</strong>
             </div>
           </div>
-
-          {/* Status & Agent Info */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'rgba(212, 175, 55, 0.1)',
-                color: 'var(--gold)',
-                padding: '6px 10px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                fontWeight: '600',
-              }}
-            >
-              <Check size={14} />
+          <div className="os-status-row">
+            <div className="os-badge green">
+              <Check size={12} />
               {ORG_CHARTER.charterStatus}
             </div>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div>
-              <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                Registered Agent
-              </p>
-              <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: '500' }}>
-                {ORG_CHARTER.registeredAgent}
-              </p>
-            </div>
-            <div>
-              <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                Annual Filing
-              </p>
-              <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: '500' }}>
-                {ORG_CHARTER.annualFiling}
-              </p>
-            </div>
-          </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Equity Structure Section */}
-      <motion.div variants={itemVariants}>
-        <h3
-          className="section-title"
-          style={{
-            color: 'var(--gold)',
-            fontSize: '12px',
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <PieChart size={16} />
+      {/* ========== EQUITY STRUCTURE ========== */}
+      <div className="os-section">
+        <div className="os-label">
+          <PieChart size={13} />
           EQUITY STRUCTURE
-        </h3>
-
-        {/* Ownership Percentage Bar */}
-        <div
-          className="glass-card"
-          style={{
-            padding: '16px',
-            marginBottom: '16px',
-          }}
-        >
-          <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', marginBottom: '8px' }}>
-            Ownership Distribution
-          </p>
-          <div style={{ display: 'flex', height: '24px', borderRadius: '4px', overflow: 'hidden', gap: '2px' }}>
-            {ORG_EQUITY.map((shareholder) => (
+        </div>
+        <div className="os-card">
+          {/* Ownership bar */}
+          <div className="os-bar-track">
+            {ORG_EQUITY.map((s) => (
               <div
-                key={shareholder.holder}
-                style={{
-                  flex: shareholder.pct,
-                  backgroundColor: shareholder.color,
-                  opacity: 0.8,
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '10px',
-                  fontWeight: '600',
-                  color: shareholder.color === 'var(--gold)' ? '#000' : '#fff',
-                  cursor: 'pointer',
-                  transition: 'opacity 0.2s',
-                }}
-                title={`${shareholder.holder}: ${shareholder.pct}%`}
-              >
-                {shareholder.pct > 12 && `${shareholder.pct}%`}
-              </div>
+                key={s.holder}
+                className="os-bar-seg"
+                style={{ flex: s.pct, background: s.color }}
+              />
             ))}
           </div>
-        </div>
 
-        {/* Shareholders List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {ORG_EQUITY.map((shareholder) => (
-            <div
-              key={shareholder.holder}
-              className="glass-card"
-              style={{
-                padding: '14px',
-                borderLeft: `3px solid ${shareholder.color}`,
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                <div>
-                  <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                    {shareholder.holder}
-                  </p>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
-                    {shareholder.role}
-                  </p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ color: shareholder.color, fontSize: '16px', fontWeight: '700' }}>
-                    {shareholder.pct}%
-                  </p>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '11px' }}>
-                    {shareholder.shares.toLocaleString()} shares
-                  </p>
+          {/* Shareholder rows */}
+          {ORG_EQUITY.map((s) => (
+            <div key={s.holder} className="os-eq-row">
+              <div
+                className="os-eq-dot"
+                style={{ background: s.color }}
+              />
+              <div className="os-eq-copy">
+                <div className="os-eq-name">{s.holder}</div>
+                <div className="os-eq-role">
+                  {s.role} · {s.type}
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span
-                  style={{
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    color: 'var(--text-tertiary)',
-                    background: 'var(--surface-2)',
-                    padding: '3px 8px',
-                    borderRadius: '3px',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {shareholder.type}
-                </span>
+              <div className="os-eq-right">
+                <strong style={{ color: s.color }}>{s.pct}%</strong>
+                <span>{s.shares.toLocaleString()} shares</span>
               </div>
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Revenue & Distributions Section */}
-      <motion.div variants={itemVariants} style={{ marginTop: '24px' }}>
-        <h3
-          className="section-title"
-          style={{
-            color: 'var(--gold)',
-            fontSize: '12px',
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <TrendingUp size={16} />
+      {/* ========== REVENUE & PROFIT-SHARING ========== */}
+      <div className="os-section">
+        <div className="os-label">
+          <TrendingUp size={13} />
           REVENUE & PROFIT-SHARING
-        </h3>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {ORG_REVENUE.map((revenue) => (
-            <div key={revenue.id} className="glass-card" style={{ padding: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                <div>
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>
-                    {revenue.period}
-                  </p>
-                  <p style={{ color: 'var(--text-primary)', fontSize: '18px', fontWeight: '700' }}>
-                    {revenue.gross}
-                  </p>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    color: 'var(--green)',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  <Check size={14} />
-                  {revenue.status}
-                </div>
+        </div>
+        {ORG_REVENUE.map((r) => (
+          <div key={r.id} className="os-card">
+            <div className="os-rev-head">
+              <div>
+                <span className="os-rev-period">{r.period}</span>
+                <strong className="os-rev-amount">{r.gross}</strong>
               </div>
-
-              {/* Distribution Breakdown */}
-              <div style={{ marginBottom: '12px' }}>
-                <p style={{ color: 'var(--text-tertiary)', fontSize: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '8px' }}>
-                  Distribution Breakdown
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  {revenue.distributions.map((dist, idx) => (
-                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
-                        {dist.to}
-                      </span>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <div
-                          style={{
-                            height: '8px',
-                            width: '80px',
-                            backgroundColor: 'var(--surface-2)',
-                            borderRadius: '2px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: '100%',
-                              width: `${dist.pct}%`,
-                              backgroundColor: idx === 0 ? 'var(--gold)' : idx === 1 ? 'var(--blue)' : 'var(--green)',
-                            }}
-                          />
-                        </div>
-                        <span style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: '600', width: '40px', textAlign: 'right' }}>
-                          {dist.pct}%
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="os-badge green">
+                <Check size={12} />
+                {r.status}
               </div>
             </div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Enterprise Credentials Section */}
-      <motion.div variants={itemVariants} style={{ marginTop: '24px', marginBottom: '40px' }}>
-        <h3
-          className="section-title"
-          style={{
-            color: 'var(--gold)',
-            fontSize: '12px',
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <Shield size={16} />
-          ENTERPRISE CREDENTIALS
-        </h3>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {ORG_CREDENTIALS.map((credential) => (
-            <div
-              key={credential.id}
-              className="glass-card"
-              style={{
-                padding: '14px',
-                borderLeft: `3px solid ${getStatusColor(credential.status)}`,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <div
-                  style={{
-                    color: 'var(--gold)',
-                    flexShrink: 0,
-                    marginTop: '2px',
-                  }}
-                >
-                  {getCredentialIcon(credential.type)}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '6px' }}>
-                    <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: '600' }}>
-                      {credential.name}
-                    </p>
+            <div className="os-rev-dist">
+              {r.distributions.map((d, i) => (
+                <div key={i} className="os-dist-row">
+                  <span>{d.to}</span>
+                  <div className="os-dist-bar">
                     <div
+                      className="os-dist-fill"
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '3px',
-                        color: getStatusColor(credential.status),
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        textTransform: 'capitalize',
-                        flexShrink: 0,
+                        width: `${d.pct}%`,
+                        background:
+                          i === 0
+                            ? 'var(--gold)'
+                            : i === 1
+                            ? 'var(--blue)'
+                            : 'var(--green)',
                       }}
-                    >
-                      {getStatusIcon(credential.status)}
-                      {credential.status.replace('_', ' ')}
-                    </div>
+                    />
                   </div>
+                  <strong>{d.pct}%</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
-                  <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '8px' }}>
-                    Issued by {credential.issuer}
-                  </p>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
-                    <div>
-                      <p style={{ color: 'var(--text-tertiary)', fontSize: '10px', fontWeight: '500', marginBottom: '2px' }}>
-                        Issued
-                      </p>
-                      <p style={{ color: 'var(--text-primary)', fontWeight: '500' }}>
-                        {credential.issued}
-                      </p>
-                    </div>
-                    <div>
-                      <p style={{ color: 'var(--text-tertiary)', fontSize: '10px', fontWeight: '500', marginBottom: '2px' }}>
-                        Expires
-                      </p>
-                      <p style={{ color: credential.status === 'expired' ? '#EF4444' : 'var(--text-primary)', fontWeight: '500' }}>
-                        {credential.expires}
-                      </p>
-                    </div>
+      {/* ========== ENTERPRISE CREDENTIALS ========== */}
+      <div className="os-section">
+        <div className="os-label">
+          <Shield size={13} />
+          ENTERPRISE CREDENTIALS
+        </div>
+        <div className="os-card">
+          {ORG_CREDENTIALS.map((c, i) => (
+            <React.Fragment key={c.id}>
+              {i > 0 && <div className="os-divider" />}
+              <div className="os-cred-row">
+                <div
+                  className="os-cred-icon"
+                  style={{ color: getStatusColor(c.status) }}
+                >
+                  {getCredentialIcon(c.type)}
+                </div>
+                <div className="os-cred-copy">
+                  <div className="os-cred-name">{c.name}</div>
+                  <div className="os-cred-meta">
+                    {c.issuer} · {c.issued} – {c.expires}
                   </div>
                 </div>
+                <div
+                  className="os-cred-status"
+                  style={{ color: getStatusColor(c.status) }}
+                >
+                  {getStatusIcon(c.status)} {c.status.replace('_', ' ')}
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           ))}
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };

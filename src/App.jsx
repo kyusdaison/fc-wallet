@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Home as HomeIcon, IdCard, Building2, ChevronDown, Bell, Settings, ArrowDown, CheckCircle2, X, Info, ShieldCheck, MessageSquare, LayoutGrid, QrCode } from 'lucide-react';
+import { Home as HomeIcon, IdCard, Building2, ChevronDown, Bell, Settings, ArrowDown, CheckCircle2, X, Info, ShieldCheck, MessageSquare, LayoutGrid, QrCode, Shield, Snowflake } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -91,6 +91,10 @@ export default function App() {
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const notifRef = useRef(null);
 
+  // Mode dropdown state
+  const [showModeMenu, setShowModeMenu] = useState(false);
+  const modeMenuRef = useRef(null);
+
   // Close notif panel on outside click
   useEffect(() => {
     if (!showNotifPanel) return;
@@ -100,6 +104,16 @@ export default function App() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [showNotifPanel]);
+
+  // Close mode menu on outside click
+  useEffect(() => {
+    if (!showModeMenu) return;
+    const handler = (e) => {
+      if (modeMenuRef.current && !modeMenuRef.current.contains(e.target)) setShowModeMenu(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showModeMenu]);
 
   const handleSendComplete = (newTx) => {
     addTransaction(newTx);
@@ -157,27 +171,94 @@ export default function App() {
       </AnimatePresence>
 
       {/* ====== Header ====== */}
-      <div className="header-area">
-        <div className="header-brand">
-          <img src={lionLogoSrc} alt="Profile" className="header-brand-logo" />
-          <div className="logo-text">FUTURE<br/>CITIZEN</div>
-        </div>
-        <div className={`status-pill ${appMode === 'Organization' ? 'org-mode' : ''}`} onClick={() => setShowContextModal(true)}>
-          <div className="status-dot"></div>
-          <span>{appMode === 'Citizen' ? 'CITIZEN MODE' : 'ORG MODE'}</span>
-          <ChevronDown size={14} />
-        </div>
-        <div className="header-actions">
-          <div className="header-icon-btn" onClick={() => setShowScanner(true)}>
-            <QrCode size={20} color="var(--gold)" />
+      <div className="hdr">
+        <div className="hdr-glow"></div>
+        <div className="hdr-inner">
+          {/* Brand cluster */}
+          <div className="hdr-brand" ref={modeMenuRef}>
+            <button type="button" className="hdr-logo-btn" onClick={() => setShowModeMenu(v => !v)}>
+              <div className="hdr-logo-ring">
+                <img src={lionLogoSrc} alt="FC" className="hdr-logo-img" />
+                <div className={`hdr-status-dot ${appMode === 'Organization' ? 'org' : 'cit'}`}></div>
+              </div>
+              <div className="hdr-titles">
+                <span className="hdr-wordmark">FUTURE CITIZEN</span>
+                <span className="hdr-mode-label">{appMode === 'Organization' ? 'Organization' : 'Citizen'} Mode</span>
+              </div>
+              <ChevronDown size={14} className={`hdr-chevron ${showModeMenu ? 'open' : ''}`} />
+            </button>
+
+            {/* Mode dropdown */}
+            <AnimatePresence>
+              {showModeMenu && (
+                <motion.div
+                  key="mode-dd"
+                  initial={{ opacity: 0, y: -6, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.95 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+                  className="mode-dropdown"
+                >
+                  <button
+                    type="button"
+                    className={`mode-dd-option ${appMode === 'Citizen' ? 'active' : ''}`}
+                    onClick={() => { setAppMode('Citizen'); setActiveTab('Home'); setShowModeMenu(false); }}
+                  >
+                    <div className="mode-dd-icon cit"><img src={CITIZEN_PROFILE.avatarThumb} alt="" className="mode-dd-avatar" /></div>
+                    <div className="mode-dd-copy">
+                      <strong>{CITIZEN_PROFILE.name}</strong>
+                      <span>Citizen Mode</span>
+                    </div>
+                    {appMode === 'Citizen' && <CheckCircle2 size={16} color="var(--blue)" strokeWidth={2.5} />}
+                  </button>
+
+                  <div className="mode-dd-divider"></div>
+
+                  <button
+                    type="button"
+                    className={`mode-dd-option ${appMode === 'Organization' ? 'active' : ''}`}
+                    onClick={() => { setAppMode('Organization'); setActiveTab('Home'); setShowModeMenu(false); }}
+                  >
+                    <div className="mode-dd-icon org"><Building2 size={15} /></div>
+                    <div className="mode-dd-copy">
+                      <strong>{ORG_PROFILE.name}</strong>
+                      <span>Organization Mode</span>
+                    </div>
+                    {appMode === 'Organization' && <CheckCircle2 size={16} color="var(--blue)" strokeWidth={2.5} />}
+                  </button>
+
+                  <div className="mode-dd-divider"></div>
+
+                  <button
+                    type="button"
+                    className="mode-dd-option"
+                    onClick={() => { setShowColdVault(true); setShowModeMenu(false); }}
+                  >
+                    <div className="mode-dd-icon cold"><Snowflake size={15} /></div>
+                    <div className="mode-dd-copy">
+                      <strong>Cold Wallet</strong>
+                      <span>Vault & Cold Storage</span>
+                    </div>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="header-icon-btn" onClick={() => setShowNotifPanel(v => !v)}>
-            <Bell size={20} color="var(--gold)" />
-            {CITIZEN_ALERTS.filter(a => a.unread).length > 0 && (
-              <div className="header-icon-badge red"></div>
-            )}
+
+          {/* Action cluster */}
+          <div className="hdr-actions">
+            <button type="button" className="hdr-action-btn" onClick={() => setShowScanner(true)}>
+              <QrCode size={18} strokeWidth={1.8} />
+            </button>
+            <button type="button" className="hdr-action-btn" onClick={() => setShowNotifPanel(v => !v)}>
+              <Bell size={18} strokeWidth={1.8} />
+              {CITIZEN_ALERTS.filter(a => a.unread).length > 0 && (
+                <span className="hdr-badge"></span>
+              )}
+            </button>
           </div>
         </div>
+        <div className="hdr-rule"></div>
       </div>
 
       {/* ====== Notification Dropdown Panel ====== */}
@@ -232,34 +313,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* ====== Context Switcher Modal ====== */}
-      <AnimatePresence>
-        {showContextModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="context-modal" onClick={() => setShowContextModal(false)}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="context-modal-inner" onClick={e => e.stopPropagation()}>
-              <h3 className="context-modal-title">Switch Active Profile</h3>
-
-              <div className={`context-option cit ${appMode === 'Citizen' ? 'active' : ''}`} onClick={() => { setAppMode('Citizen'); setActiveTab('Home'); setShowContextModal(false); }}>
-                <div className="context-option-icon"><img src={CITIZEN_PROFILE.avatarThumb} alt="" className="context-option-avatar" /></div>
-                <div className="context-option-info">
-                  <div className="context-option-name">{CITIZEN_PROFILE.name}</div>
-                  <div className="context-option-subtitle">Personal Identity</div>
-                </div>
-                {appMode === 'Citizen' && <CheckCircle2 size={24} color="var(--blue)" strokeWidth={3} />}
-              </div>
-
-              <div className={`context-option org ${appMode === 'Organization' ? 'active' : ''}`} onClick={() => { setAppMode('Organization'); setActiveTab('Home'); setShowContextModal(false); }}>
-                <div className="context-option-icon"><Building2 size={20} /></div>
-                <div className="context-option-info">
-                  <div className="context-option-name">{ORG_PROFILE.name}</div>
-                  <div className="context-option-subtitle">E-Company Mode</div>
-                </div>
-                {appMode === 'Organization' && <CheckCircle2 size={24} color="var(--blue)" strokeWidth={3} />}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Context modal removed — replaced by logo dropdown */}
 
       {/* ====== Global Biometric Gate ====== */}
       {globalBiometricRequest && <GlobalBiometricGate request={globalBiometricRequest} onClose={() => {

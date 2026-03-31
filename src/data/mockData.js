@@ -249,6 +249,20 @@ export const ORG_ALERTS = [
   { id: 'oa5', sender: 'Security Monitor', icon: 'lock', time: '3 days ago', unread: false, type: 'security', title: 'New Device Access Attempt', preview: 'A new device attempted to access the corporate portal from Singapore. Access was blocked pending biometric verification.', actions: ['Review Log'] },
 ];
 
+export const ORG_DIRECTORY = [
+  { id: 'od1', name: 'Meridian Holdings', entityId: 'FC-ORG-2201', initials: 'MH', type: 'enterprise', role: 'Investment Partner', status: 'L3 Verified', color: '#3b82f6' },
+  { id: 'od2', name: 'Vanguard Capital', entityId: 'FC-ORG-0088', initials: 'VC', type: 'enterprise', role: 'Lead Investor', status: 'L3 Verified', color: '#10b981' },
+  { id: 'od3', name: 'Apex Legal Group', entityId: 'FC-ORG-1455', initials: 'AL', type: 'enterprise', role: 'Legal Counsel', status: 'L3 Verified', color: '#8b5cf6' },
+  { id: 'od4', name: 'Sentinel Audit Co.', entityId: 'FC-ORG-0932', initials: 'SA', type: 'enterprise', role: 'External Auditor', status: 'L2 Verified', color: '#f59e0b' },
+  { id: 'od5', name: 'FC Revenue Office', entityId: 'FC-GOV-0001', initials: 'FR', type: 'government', role: 'Tax Authority', status: 'Authority', color: '#D4AF37' },
+  { id: 'od6', name: 'FC Corporate Authority', entityId: 'FC-GOV-0002', initials: 'CA', type: 'government', role: 'Regulatory Body', status: 'Authority', color: '#D4AF37' },
+  { id: 'od7', name: 'FC Compliance Bureau', entityId: 'FC-GOV-0003', initials: 'CB', type: 'government', role: 'AML Oversight', status: 'Authority', color: '#D4AF37' },
+  { id: 'od8', name: 'Alexander Chen', entityId: 'FC-CIT-8841', initials: 'AC', type: 'individual', role: 'CFO', status: 'L3 Verified', color: '#6366f1', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100&h=100' },
+  { id: 'od9', name: 'Sarah Williams', entityId: 'FC-CIT-7723', initials: 'SW', type: 'individual', role: 'Operations Lead', status: 'L2 Verified', color: '#ec4899', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100' },
+  { id: 'od10', name: 'Victoria Tan', entityId: 'FC-CIT-6610', initials: 'VT', type: 'individual', role: 'Legal Officer', status: 'L3 Verified', color: '#14b8a6' },
+  { id: 'od11', name: 'Marcus Rivera', entityId: 'FC-CIT-5502', initials: 'MR', type: 'individual', role: 'Treasury Analyst', status: 'L2 Verified', color: '#f97316' },
+];
+
 export const ORG_AUDIT_LOG = [
   { id: 'log-1', action: 'Multi-sig approval', detail: 'Kyus Daison signed AP-1 (AWS Infrastructure)', time: '10:30 AM', operator: 'Kyus Daison', type: 'signing' },
   { id: 'log-2', action: 'Treasury transfer', detail: 'Operating → Vendor: $4,250.00 FCUSD', time: '10:31 AM', operator: 'System', type: 'transfer' },

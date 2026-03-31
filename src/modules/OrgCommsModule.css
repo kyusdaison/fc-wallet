@@ -1,0 +1,676 @@
+/* ============================================================================
+   OrgCommsModule Styles - Compact & Professional
+   All styles use oc- prefix for organizational communications
+   ============================================================================ */
+
+/* PAGE CONTAINER */
+.oc-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.oc-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--navy);
+  background: var(--bg-primary);
+}
+
+.oc-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.oc-header-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   TAB BAR
+   ============================================================================ */
+
+.oc-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--navy);
+  background: var(--bg-primary);
+  align-items: center;
+}
+
+.oc-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.oc-tab:hover {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--text-primary);
+}
+
+.oc-tab-active {
+  background: var(--gold);
+  color: #000;
+  font-weight: 600;
+}
+
+.oc-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   CONTENT AREA
+   ============================================================================ */
+
+.oc-content {
+  flex: 1;
+  overflow: auto;
+  padding: 20px 16px;
+}
+
+.oc-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================================================================
+   SEARCH
+   ============================================================================ */
+
+.oc-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--navy);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+}
+
+.oc-search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.oc-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  padding: 0;
+}
+
+.oc-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ============================================================================
+   CARDS & LISTS
+   ============================================================================ */
+
+.oc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--navy);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.oc-card > div:not(:last-child) {
+  border-bottom: 1px solid var(--navy);
+}
+
+.oc-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ============================================================================
+   FILTERS
+   ============================================================================ */
+
+.oc-filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.oc-filter-pill {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--navy);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.oc-filter-pill:hover {
+  border-color: var(--gold);
+  color: var(--text-primary);
+}
+
+.oc-filter-active {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   CHAT ROWS
+   ============================================================================ */
+
+.oc-chat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.oc-chat-row:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.oc-chat-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.oc-avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.oc-chat-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-chat-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.oc-chat-entity {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.oc-chat-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+  justify-content: flex-end;
+}
+
+.oc-chat-msg {
+  text-align: right;
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-chat-preview {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-chat-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.oc-unread-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   NOTES & CALLOUTS
+   ============================================================================ */
+
+.oc-note {
+  padding: 12px 16px;
+  border-left: 3px solid var(--gold);
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.oc-note strong {
+  font-weight: 600;
+}
+
+/* ============================================================================
+   APPROVALS
+   ============================================================================ */
+
+.oc-approval {
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.oc-approval:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.oc-approval.urgent {
+  border-left: 3px solid #ef4444;
+}
+
+.oc-approval.pending {
+  border-left: 3px solid var(--gold);
+}
+
+.oc-approval.completed {
+  border-left: 3px solid var(--green);
+  opacity: 0.6;
+}
+
+.oc-approval-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.oc-approval-main {
+  flex: 1;
+}
+
+.oc-approval-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.oc-approval-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.oc-approval-details {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.oc-approval-detail {
+  display: flex;
+  gap: 6px;
+}
+
+.oc-detail-label {
+  color: var(--text-muted);
+}
+
+.oc-detail-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.oc-detail-vault {
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.oc-signatures {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.oc-sig-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.oc-sig-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.oc-sig-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.oc-deadline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.oc-approval-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.oc-status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.oc-status-urgent {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.oc-status-pending {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.oc-status-completed {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.oc-chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.oc-approval-expanded {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--navy);
+}
+
+.oc-signers-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.oc-signers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oc-signer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.oc-signer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oc-signer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.oc-signer-name {
+  color: var(--text-primary);
+}
+
+.oc-signer-status {
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   ALERTS
+   ============================================================================ */
+
+.oc-alert {
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.oc-alert:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.oc-alert.oc-unread {
+  background: rgba(212, 175, 55, 0.03);
+}
+
+.oc-alert-header {
+  display: flex;
+  gap: 12px;
+}
+
+.oc-alert-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.oc-alert-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.oc-icon-blue {
+  color: var(--blue);
+}
+
+.oc-icon-gold {
+  color: var(--gold);
+}
+
+.oc-icon-green {
+  color: var(--green);
+}
+
+.oc-icon-navy {
+  color: var(--navy);
+}
+
+.oc-icon-purple {
+  color: #a78bfa;
+}
+
+.oc-icon-muted {
+  color: var(--text-muted);
+}
+
+.oc-alert-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-alert-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.oc-alert-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.oc-alert-sender {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.oc-alert-preview {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.oc-alert-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.oc-alert-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--navy);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.oc-action-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--navy);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.oc-action-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  .oc-header {
+    padding: 12px;
+  }
+
+  .oc-tabs {
+    padding: 8px 12px;
+    gap: 4px;
+  }
+
+  .oc-tab {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .oc-content {
+    padding: 12px;
+  }
+
+  .oc-approval-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .oc-alert-header {
+    flex-direction: column;
+  }
+
+  .oc-chat-right {
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 0;
+  }
+}
