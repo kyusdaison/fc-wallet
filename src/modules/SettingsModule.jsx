@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Globe, Activity, Bell, Wallet, User, Users, SlidersHorizontal, CreditCard, Info, FileText, FileSignature, ChevronLeft, ChevronRight, Fingerprint, Lock, Smartphone, Database, Clock, Share2, ArrowRightLeft, TrendingUp, CheckCircle2, Sparkles, X } from 'lucide-react';
+import { Shield, Globe, Activity, Bell, Wallet, User, Users, SlidersHorizontal, CreditCard, Info, FileText, FileSignature, ChevronLeft, ChevronRight, Fingerprint, Lock, Smartphone, Database, Clock, Share2, ArrowRightLeft, TrendingUp, CheckCircle2, Sparkles, X, Server, Zap, Radio, ShieldCheck } from 'lucide-react';
 import { CITIZEN_PROFILE } from '../data/mockData';
 import { useAppStore } from '../store/useAppStore';
 import { useWalletStore } from '../store/useWalletStore';
@@ -152,6 +151,17 @@ const SettingsModule = ({ isTab = false, onClose }) => {
   const numericLevel2Max = Number(signingLevels.level2.thresholdMax || 0);
   const numericLevel3Threshold = Number(signingLevels.level3.threshold || 0);
   const vaultTriggerLabel = signingLevels.level4.triggerMode === 'manual' ? 'Manual' : signingLevels.level4.triggerMode === 'sensitive' ? 'Ops Only' : 'By Amount';
+
+  /* ---- Quick Actions ---- */
+  const SET_ACTIONS = [
+    { id: 'security', title: 'Security', subtitle: 'Shield center', icon: <Shield size={20} color="#ef4444" />, iconClass: 'cm-icon-red', toneClass: 'tone-red', emphasis: 'primary', action: () => setSettingsSection('security') },
+    { id: 'signing', title: 'Signing', subtitle: 'Rule engine', icon: <SlidersHorizontal size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary', action: () => setSettingsSection('signing') },
+    { id: 'network', title: 'Network', subtitle: 'Chain status', icon: <Activity size={20} color="#10b981" />, iconClass: 'cm-icon-green', toneClass: 'tone-green', emphasis: 'secondary', action: () => setSettingsSection('network') },
+    { id: 'recovery', title: 'Recovery', subtitle: 'Guardians', icon: <Users size={20} color="#8b5cf6" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary', action: () => setSettingsSection('recovery') },
+  ];
+
+  /* ---- Menu row tone mapping ---- */
+  const groupTone = { ACCOUNT: 'blue', SECURITY: 'red', 'WALLET & RECOVERY': 'gold', ABOUT: 'slate' };
 
   /* ---- Menu rows for the main page ---- */
   const menuGroups = [
@@ -413,8 +423,8 @@ const SettingsModule = ({ isTab = false, onClose }) => {
               { label: 'Escalation', value: 'Biometric' },
             ]} />
 
-            <div className="set-card" style={{ padding: '14px' }}>
-              <div className="section-title" style={{ margin: 0 }}>DAILY TRANSACTION LIMIT</div>
+            <div className="set-card p-14">
+              <div className="section-title section-title-flush">DAILY TRANSACTION LIMIT</div>
               <div className="set-limit-input-row">
                 <input type="text" value={dailyLimit} onChange={e => setDailyLimit(e.target.value)} className="set-limit-input" />
                 <span className="set-limit-unit">FCUSD</span>
@@ -454,8 +464,8 @@ const SettingsModule = ({ isTab = false, onClose }) => {
               ))}
             </div>
 
-            <div className="set-card" style={{ padding: '14px', textAlign: 'center' }}>
-              <div className="section-title" style={{ margin: 0 }}>RECOVERY THRESHOLD</div>
+            <div className="set-card p-14 text-center">
+              <div className="section-title section-title-flush">RECOVERY THRESHOLD</div>
               <div className="set-threshold-value">2 <span>of</span> 3</div>
               <div className="set-threshold-copy">Two guardians needed before recovery can open the wallet.</div>
             </div>
@@ -643,44 +653,107 @@ const SettingsModule = ({ isTab = false, onClose }) => {
       {settingsSection ? (
         <div className="settings-panel-scroll">
           {renderSubSection()}
-          <div style={{ height: '30px' }}></div>
+          <div className="spacer-30"></div>
         </div>
       ) : (
-        <div className="settings-panel-scroll" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="settings-panel-scroll module-stack-sm">
 
-          {/* Compact header */}
-          <div className="set-main-header">
-            <div>
-              <div className="set-main-title">Settings</div>
-              <div className="set-main-subtitle">Sovereign control surface</div>
-            </div>
-          </div>
-
-          {/* Mini profile strip */}
-          <div className="set-profile-strip">
-            <img src={CITIZEN_PROFILE.avatarThumb} alt="" className="set-profile-avatar" />
-            <div className="set-profile-copy">
-              <div className="set-profile-name">{CITIZEN_PROFILE.name}</div>
-              <div className="set-profile-did">{CITIZEN_PROFILE.did} · {CITIZEN_PROFILE.trustLevel}</div>
-            </div>
-          </div>
-
-          {/* Menu groups */}
-          {menuGroups.map(group => (
-            <div key={group.title} className="set-menu-group">
-              <div className="section-title">{group.title}</div>
-              <div className="set-card">
-                {group.rows.map((row, i) => (
-                  <React.Fragment key={row.key}>
-                    <SRow icon={row.icon} label={row.label} desc={row.desc} onClick={row.action} />
-                    {i < group.rows.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
+          {/* ── 1. Glass Hero Card — profile + stats ── */}
+          <div className="st-hero">
+            <div className="st-hero-glow" />
+            <div className="st-hero-top">
+              <div className="st-hero-profile">
+                <div className="st-hero-avatar-wrap">
+                  <img src={CITIZEN_PROFILE.avatarThumb} alt="" className="st-hero-avatar" />
+                  <div className="st-hero-avatar-ring" />
+                </div>
+                <div>
+                  <div className="st-hero-kicker">SOVEREIGN CONTROL</div>
+                  <div className="st-hero-name">{CITIZEN_PROFILE.name}</div>
+                  <div className="st-hero-did">{CITIZEN_PROFILE.did}</div>
+                </div>
+              </div>
+              <div className="st-hero-badge">
+                <div className="st-hero-pulse" />
+                <ShieldCheck size={11} />
+                Secured
               </div>
             </div>
-          ))}
+            <div className="st-hero-stats">
+              <div className="st-hero-stat">
+                <span className="st-stat-value">{CITIZEN_PROFILE.trustLevel}</span>
+                <span className="st-stat-label">Trust</span>
+              </div>
+              <div className="st-hero-stat-divider" />
+              <div className="st-hero-stat">
+                <span className="st-stat-value">{confirmedGuardians}/3</span>
+                <span className="st-stat-label">Guardians</span>
+              </div>
+              <div className="st-hero-stat-divider" />
+              <div className="st-hero-stat">
+                <span className="st-stat-value">2</span>
+                <span className="st-stat-label">Devices</span>
+              </div>
+            </div>
+          </div>
 
-          <div className="set-footer">FC Wallet v2.4.0 · Authority build 2026.03</div>
+          {/* ── 2. Quick Actions ── */}
+          <div className="home-action-grid">
+            {SET_ACTIONS.map((a) => (
+              <button key={a.id} type="button" className={`home-action-btn ${a.emphasis} ${a.toneClass}`} onClick={a.action}>
+                <div className={`icon-wrap ${a.iconClass}`}>{a.icon}</div>
+                <div className="home-action-copy">
+                  <span className="home-action-title">{a.title}</span>
+                  <span className="home-action-subtitle">{a.subtitle}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* ── 3. Menu groups — upgraded rows with color bars ── */}
+          {menuGroups.map(group => {
+            const tone = groupTone[group.title] || 'slate';
+            const toneColors = { blue: 'var(--blue)', red: '#ef4444', gold: 'var(--gold)', slate: 'var(--text-tertiary)' };
+            return (
+              <div key={group.title} className="set-menu-group">
+                <div className="sh-section-head">
+                  <div className="section-title" style={{ margin: 0 }}>{group.title}</div>
+                  <span className="sh-section-count">{group.rows.length} items</span>
+                </div>
+                <div className="st-menu-list">
+                  {group.rows.map((row) => (
+                    <button key={row.key} type="button" className="st-menu-row" onClick={row.action}>
+                      <div className="st-menu-bar" style={{ background: toneColors[tone] }} />
+                      <div className="set-row-icon">{row.icon}</div>
+                      <div className="set-row-copy">
+                        <div className="set-row-label">{row.label}</div>
+                        <div className="set-row-desc">{row.desc}</div>
+                      </div>
+                      <ChevronRight size={14} color="var(--text-tertiary)" className="st-menu-arrow" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* ── 4. Footer Stats ── */}
+          <div className="cm-net-stats">
+            <div className="cm-net-stat">
+              <ShieldCheck size={12} color="#10b981" />
+              <span>Shield Active</span>
+            </div>
+            <div className="cm-net-divider" />
+            <div className="cm-net-stat">
+              <Users size={12} color="#8b5cf6" />
+              <span>{confirmedGuardians} Guardians</span>
+            </div>
+            <div className="cm-net-divider" />
+            <div className="cm-net-stat">
+              <Lock size={12} color="var(--gold)" />
+              <span>L4 Vault</span>
+            </div>
+          </div>
         </div>
       )}
     </motion.div>

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowDown, ArrowUp, ArrowRightLeft, CheckCircle2, ChevronLeft, ChevronRight, Clock, Copy, CreditCard, Database, FileText, Fingerprint, Lock, Share2, Shield, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowRightLeft, CheckCircle2, ChevronLeft, ChevronRight, Clock, Copy, CreditCard, Database, FileText, Fingerprint, Lock, Share2, Shield, ShieldCheck, SlidersHorizontal, Server, Sparkles, X } from 'lucide-react';
 
-/* ---- Shared micro-components (matches Settings page pattern) ---- */
+/* ---- Shared micro-components ---- */
 const CvBack = ({ title, onBack }) => (
   <div className="cv-sub-header">
     <button type="button" className="cv-back" onClick={onBack}><ChevronLeft size={20} color="#93c5fd" strokeWidth={2.5} /></button>
@@ -66,7 +65,7 @@ const CvAssetRow = ({ asset, onClick }) => (
       <div className="cv-row-label">{asset.name}</div>
       <div className="cv-row-desc">{asset.symbol} <span className="cv-cold-tag">Cold</span></div>
     </div>
-    <div className="cv-row-trail" style={{ textAlign: 'right' }}>
+    <div className="cv-row-trail text-right">
       <div className="cv-row-label">{asset.balance}</div>
       <div className="cv-row-desc">{asset.fiat} <span className={asset.positive ? 'positive' : 'negative'}>{asset.change}</span></div>
     </div>
@@ -164,9 +163,18 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
   const swapTargetAssets = coldAssets.filter(a => a.symbol !== swapFrom);
   const filteredActivity = extendedColdTransactions.filter(tx => activityFilter === 'All' || (activityFilter === 'Sent' && tx.type === 'send') || (activityFilter === 'Received' && tx.type === 'receive') || (activityFilter === 'Swapped' && tx.type === 'swap'));
   const selectedAssetTxs = selectedAsset ? extendedColdTransactions.filter(tx => tx.asset.includes(selectedAsset.symbol)) : [];
+  const pairedCards = backupCards.filter(c => c.status !== 'empty').length;
 
   const handleCopy = () => { navigator.clipboard.writeText(coldReceiveAddress).catch(() => {}); setCopiedAddr(true); setTimeout(() => setCopiedAddr(false), 2000); };
   const handleShare = async () => { if (navigator.share) { try { await navigator.share({ title: 'FC Cold Vault', text: coldReceiveAddress }); return; } catch {} } handleCopy(); };
+
+  /* ---- Quick Actions ---- */
+  const CV_ACTIONS = [
+    { id: 'send', title: 'Send', subtitle: 'NFC sign', icon: <ArrowUp size={20} color="#60a5fa" />, iconClass: 'cm-icon-blue', toneClass: 'tone-blue', emphasis: 'primary', action: () => { setColdView('send'); setColdSendStep('form'); setColdSendAddr(''); setColdSendAmount(''); setColdPinInput(''); } },
+    { id: 'receive', title: 'Receive', subtitle: 'Vault addr', icon: <ArrowDown size={20} color="#10b981" />, iconClass: 'cm-icon-green', toneClass: 'tone-green', emphasis: 'primary', action: () => { setColdView('receive'); setCopiedAddr(false); } },
+    { id: 'swap', title: 'Swap', subtitle: 'Rebalance', icon: <ArrowRightLeft size={20} color="#8b5cf6" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary', action: () => { setColdView('swap'); setSwapStep('form'); setSwapAmount(''); } },
+    { id: 'activity', title: 'Activity', subtitle: 'Full log', icon: <FileText size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'secondary', action: () => setColdView('activity') },
+  ];
 
   /* ---- NFC tap stage (reusable) ---- */
   const NfcStage = ({ label, detail, onTap, onCancel, tone = 'gold' }) => (
@@ -198,7 +206,7 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
   );
 
   /* ============================================================
-     SUB-PAGES
+     SUB-PAGES (unchanged)
      ============================================================ */
   const renderSubView = () => {
     switch (coldView) {
@@ -215,19 +223,19 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
                 { label: 'Card', value: '····9201' },
               ]} />
 
-              <div className="cv-card" style={{ padding: '14px' }}>
+              <div className="cv-card p-14">
                 <div className="cv-field-label">Recipient</div>
                 <input type="text" value={coldSendAddr} onChange={e => setColdSendAddr(e.target.value)} placeholder="0x... or fc1..." className="cv-input mono" />
               </div>
 
-              <div className="cv-card" style={{ padding: '14px' }}>
+              <div className="cv-card p-14">
                 <div className="cv-field-label">Asset</div>
                 <div className="cv-chip-row">
                   {['FCUSD', 'FCC', 'BTC', 'ETH'].map(a => (
                     <button key={a} type="button" className={`cv-chip ${coldSendAsset === a ? 'active' : ''}`} onClick={() => setColdSendAsset(a)}>{a}</button>
                   ))}
                 </div>
-                <div className="cv-field-label" style={{ marginTop: 10 }}>Amount</div>
+                <div className="cv-field-label mt-10">Amount</div>
                 <div className="cv-input-row">
                   <input type="text" value={coldSendAmount} onChange={e => setColdSendAmount(e.target.value)} placeholder="0.00" className="cv-input mono amount" />
                   <span className="cv-input-unit">{coldSendAsset}</span>
@@ -308,7 +316,7 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
               </div>
             </div>
 
-            <div className="cv-card" style={{ padding: '12px 14px' }}>
+            <div className="cv-card p-12-14">
               <div className="cv-field-label">Cold Vault Address</div>
               <div className="cv-address-text">{coldReceiveAddress}</div>
             </div>
@@ -339,7 +347,7 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
                 { label: 'Approval', value: 'NFC' },
               ]} />
 
-              <div className="cv-card" style={{ padding: '14px' }}>
+              <div className="cv-card p-14">
                 <div className="cv-field-label">From</div>
                 <div className="cv-chip-row wrap">
                   {coldAssets.map(a => (
@@ -348,7 +356,7 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
                     </button>
                   ))}
                 </div>
-                <div className="cv-input-row" style={{ marginTop: 10 }}>
+                <div className="cv-input-row mt-10">
                   <input type="text" value={swapAmount} onChange={e => setSwapAmount(e.target.value)} placeholder="0.00" className="cv-input mono amount" />
                   <span className="cv-input-unit">{swapFrom}</span>
                 </div>
@@ -357,40 +365,35 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
 
               <div className="cv-swap-arrow">
                 <button type="button" className="cv-swap-toggle" onClick={() => { const n = swapFrom; setSwapFrom(swapTo); setSwapTo(n); }}>
-                  <ArrowRightLeft size={16} color="#c4b5fd" style={{ transform: 'rotate(90deg)' }} />
+                  <ArrowRightLeft size={16} color="#c4b5fd" className="rotate-90" />
                 </button>
               </div>
 
-              <div className="cv-card" style={{ padding: '14px' }}>
+              <div className="cv-card p-14">
                 <div className="cv-field-label">To</div>
                 <div className="cv-chip-row wrap">
                   {swapTargetAssets.map(a => (
-                    <button key={a.symbol} type="button" className={`cv-chip ${swapTo === a.symbol ? 'active green' : ''}`} onClick={() => setSwapTo(a.symbol)}>
+                    <button key={a.symbol} type="button" className={`cv-chip ${swapTo === a.symbol ? 'active purple' : ''}`} onClick={() => setSwapTo(a.symbol)}>
                       <span>{a.icon}</span> {a.symbol}
                     </button>
                   ))}
                 </div>
-                <div className="cv-quote-row">
-                  <span className="cv-quote-value">{swapAmount ? `≈ ${coldSwapQuote}` : '—'}</span>
-                  <span className="cv-quote-symbol">{swapTo}</span>
-                </div>
+                {coldSwapQuote && (
+                  <div className="cv-swap-quote">
+                    <span>You receive</span>
+                    <strong>≈ {coldSwapQuote} {swapTo}</strong>
+                  </div>
+                )}
+                <div className="cv-field-hint">Rate: 1 {swapFrom} ≈ {coldSwapRate.toFixed(swapTo === 'BTC' ? 8 : 4)} {swapTo}</div>
               </div>
 
-              {swapAmount && (
-                <div className="cv-card" style={{ padding: '12px 14px' }}>
-                  <div className="cv-rate-line"><span>Rate</span><strong>1 {swapFrom} = {coldSwapRate > 1000 ? coldSwapRate.toFixed(0) : coldSwapRate.toFixed(4)} {swapTo}</strong></div>
-                  <div className="cv-rate-line"><span>Slippage</span><strong className="positive">0.1%</strong></div>
-                  <div className="cv-rate-line"><span>Fee</span><strong>~$0.02</strong></div>
-                </div>
-              )}
-
               <button type="button" className={`cv-btn primary purple full ${swapReady ? '' : 'disabled'}`} onClick={() => { if (swapReady) setSwapStep('nfc'); }}>
-                <ArrowRightLeft size={18} /> Review Swap
+                <CreditCard size={18} /> Approve Swap
               </button>
             </>)}
 
             {swapStep === 'nfc' && (
-              <NfcStage tone="purple" label="Swap" detail={`${swapAmount} ${swapFrom} → ${coldSwapQuote} ${swapTo}`} onTap={() => setSwapStep('success')} onCancel={() => setSwapStep('form')} />
+              <NfcStage label="Swapping" detail={`${swapAmount} ${swapFrom} → ${swapTo}`} tone="purple" onTap={() => setSwapStep('success')} onCancel={() => setSwapStep('form')} />
             )}
 
             {swapStep === 'success' && (
@@ -446,11 +449,11 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
             </div>
 
             {/* Mini chart */}
-            <div className="cv-card" style={{ padding: '12px 14px' }}>
+            <div className="cv-card p-12-14">
               <div className="cv-chart-head"><span>Price</span>
                 <div className="cv-mini-tabs">{['1D','1W','1M','1Y'].map(p => <span key={p} className={p === '1W' ? 'active' : ''}>{p}</span>)}</div>
               </div>
-              <svg viewBox="0 0 300 60" style={{ width: '100%', height: '60px' }}>
+              <svg viewBox="0 0 300 60" className="cv-chart-svg">
                 <defs><linearGradient id={`cg-${selectedAsset.symbol}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={selectedAsset.color} stopOpacity="0.25" /><stop offset="100%" stopColor={selectedAsset.color} stopOpacity="0" /></linearGradient></defs>
                 <path d={selectedAsset.positive ? 'M0,45 C50,40 100,30 150,25 C200,20 250,22 300,12 L300,60 L0,60 Z' : 'M0,20 C50,25 100,35 150,30 C200,40 250,45 300,50 L300,60 L0,60 Z'} fill={`url(#cg-${selectedAsset.symbol})`} />
                 <path d={selectedAsset.positive ? 'M0,45 C50,40 100,30 150,25 C200,20 250,22 300,12' : 'M0,20 C50,25 100,35 150,30 C200,40 250,45 300,50'} fill="none" stroke={selectedAsset.color} strokeWidth="2" />
@@ -497,12 +500,12 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3 }}
       className="cold-vault-overlay"
-      style={{ background: '#0d0d0f', display: 'flex', flexDirection: 'column' }}
+      style={{ background: '#0d0d0f' }}
     >
       {/* NFC Tap Modal */}
       {showNfcModal && (
         <div className="cv-nfc-overlay">
-          <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2, repeat: Infinity }} className="cv-stage-orb gold" style={{ width: 120, height: 120 }}>
+          <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2, repeat: Infinity }} className="cv-stage-orb gold cv-stage-orb-size">
             <CreditCard size={40} color="var(--gold)" />
           </motion.div>
           <div className="cv-stage-title">Tap Your FC Card</div>
@@ -534,110 +537,166 @@ const ColdVaultModule = ({ onClose, onOpenSettings }) => {
         {coldView !== 'main' ? (
           <>
             {renderSubView()}
-            <div style={{ height: 30 }}></div>
+            <div className="spacer-30"></div>
           </>
-        ) : (<>
+        ) : (
+          <div className="cvh-main">
 
-          {/* Balance strip */}
-          <div className="cv-balance-strip">
-            <div className="cv-balance-label">DEEP STORAGE</div>
-            <div className="cv-balance-value">{totalColdBalance}</div>
-            <div className="cv-balance-change">
-              <span className="positive">+$4,280.50 (24h)</span>
-              <span className="cv-balance-pct">92.4% of net worth</span>
+            {/* ── 1. Glass Hero Card — vault balance + stats ── */}
+            <div className="cvh-hero">
+              <div className="cvh-hero-glow" />
+              <div className="cvh-hero-top">
+                <div>
+                  <div className="cvh-hero-kicker">DEEP STORAGE</div>
+                  <div className="cvh-hero-balance">{totalColdBalance}</div>
+                  <div className="cvh-hero-change">
+                    <span className="positive">+$4,280.50</span>
+                    <span className="cvh-hero-pct">92.4% of net worth</span>
+                  </div>
+                </div>
+                <div className="cvh-hero-badge">
+                  <div className="cvh-hero-pulse" />
+                  <ShieldCheck size={11} />
+                  {cardConnected ? 'Connected' : 'Offline'}
+                </div>
+              </div>
+              <div className="cvh-hero-stats">
+                <div className="cvh-hero-stat">
+                  <span className="cvh-stat-value">{coldAssets.length}</span>
+                  <span className="cvh-stat-label">Assets</span>
+                </div>
+                <div className="cvh-hero-stat-divider" />
+                <div className="cvh-hero-stat">
+                  <span className="cvh-stat-value">{pairedCards}</span>
+                  <span className="cvh-stat-label">Cards</span>
+                </div>
+                <div className="cvh-hero-stat-divider" />
+                <div className="cvh-hero-stat">
+                  <span className="cvh-stat-value">L4</span>
+                  <span className="cvh-stat-label">Policy</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <CvInfoBar items={[
-            { label: 'Assets', value: `${coldAssets.length} tokens` },
-            { label: 'Cards', value: `${backupCards.filter(c => c.status !== 'empty').length} paired` },
-            { label: 'Policy', value: '4 levels' },
-          ]} />
-
-          {/* Action buttons */}
-          <div className="cv-action-trio">
-            <button type="button" className="cv-action-btn blue" onClick={() => { setColdView('send'); setColdSendStep('form'); setColdSendAddr(''); setColdSendAmount(''); setColdPinInput(''); }}>
-              <ArrowUp size={18} /><span>Send</span><small>NFC sign</small>
-            </button>
-            <button type="button" className="cv-action-btn green" onClick={() => { setColdView('receive'); setCopiedAddr(false); }}>
-              <ArrowDown size={18} /><span>Receive</span><small>Vault addr</small>
-            </button>
-            <button type="button" className="cv-action-btn purple" onClick={() => { setColdView('swap'); setSwapStep('form'); setSwapAmount(''); }}>
-              <ArrowRightLeft size={18} /><span>Swap</span><small>Rebalance</small>
-            </button>
-          </div>
-
-          {/* Cold Assets */}
-          <div className="cv-section">
-            <div className="cv-section-label">COLD ASSETS</div>
-            <div className="cv-card">
-              {coldAssets.map((a, i) => (
-                <React.Fragment key={a.symbol}>
-                  <CvAssetRow asset={a} onClick={() => { setSelectedAsset(a); setColdView('assetDetail'); }} />
-                  {i < coldAssets.length - 1 && <CvDivider />}
-                </React.Fragment>
+            {/* ── 2. Quick Actions (2×2 grid) ── */}
+            <div className="home-action-grid">
+              {CV_ACTIONS.map((a) => (
+                <button key={a.id} type="button" className={`home-action-btn ${a.emphasis} ${a.toneClass}`} onClick={a.action}>
+                  <div className={`icon-wrap ${a.iconClass}`}>{a.icon}</div>
+                  <div className="home-action-copy">
+                    <span className="home-action-title">{a.title}</span>
+                    <span className="home-action-subtitle">{a.subtitle}</span>
+                  </div>
+                </button>
               ))}
             </div>
-          </div>
 
-          {/* Backup Cards */}
-          <div className="cv-section">
-            <div className="cv-section-label">BACKUP CARDS</div>
-            <div className="cv-card">
-              {backupCards.map((c, i) => (
-                <React.Fragment key={c.id}>
-                  <CvCardRow card={c} />
-                  {i < backupCards.length - 1 && <CvDivider />}
-                </React.Fragment>
-              ))}
+            {/* ── 3. Cold Assets — glass card section ── */}
+            <div className="set-menu-group">
+              <div className="sh-section-head">
+                <div className="section-title" style={{ margin: 0 }}>COLD ASSETS</div>
+                <span className="sh-section-count">{coldAssets.length} tokens</span>
+              </div>
+              <div className="cv-card">
+                {coldAssets.map((a, i) => (
+                  <React.Fragment key={a.symbol}>
+                    <CvAssetRow asset={a} onClick={() => { setSelectedAsset(a); setColdView('assetDetail'); }} />
+                    {i < coldAssets.length - 1 && <CvDivider />}
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Security */}
-          <div className="cv-section">
-            <div className="cv-section-label">SECURITY</div>
-            <div className="cv-card">
-              {securityItems.map((item, i) => (
-                <React.Fragment key={item.label}>
-                  <CvRow icon={item.icon} label={item.label} right={<span style={{ fontSize: 12, fontWeight: 600, color: item.vColor }}>{item.value}</span>} onClick={item.action} />
-                  {i < securityItems.length - 1 && <CvDivider />}
-                </React.Fragment>
-              ))}
+            {/* ── 4. Backup Cards — glass rows ── */}
+            <div className="set-menu-group">
+              <div className="sh-section-head">
+                <div className="section-title" style={{ margin: 0 }}>BACKUP CARDS</div>
+                <span className="sh-section-count">{pairedCards} paired</span>
+              </div>
+              <div className="st-menu-list">
+                {backupCards.map((c) => (
+                  <div key={c.id} className="st-menu-row">
+                    <div className="st-menu-bar" style={{ background: c.status === 'connected' ? 'var(--gold)' : c.status === 'synced' ? '#10b981' : 'var(--text-tertiary)' }} />
+                    <div className="set-row-icon">
+                      <CreditCard size={16} color={c.status === 'connected' ? 'var(--gold)' : c.status === 'synced' ? '#10b981' : 'var(--text-tertiary)'} />
+                    </div>
+                    <div className="set-row-copy">
+                      <div className="set-row-label">{c.name}</div>
+                      <div className="set-row-desc">····{c.last4} · {c.firmware} · {c.lastSync}</div>
+                    </div>
+                    <div className={`cv-status-pill ${c.status}`}>
+                      <span className="cv-status-dot"></span>
+                      {c.status === 'empty' ? 'Add' : c.status}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Recent Activity */}
-          <div className="cv-section">
-            <div className="cv-section-head">
-              <div className="cv-section-label">RECENT ACTIVITY</div>
-              <button type="button" className="cv-link" onClick={() => setColdView('activity')}>View All</button>
+            {/* ── 5. Security — glass rows ── */}
+            <div className="set-menu-group">
+              <div className="sh-section-head">
+                <div className="section-title" style={{ margin: 0 }}>SECURITY</div>
+                <span className="sh-section-count">{securityItems.length} controls</span>
+              </div>
+              <div className="st-menu-list">
+                {securityItems.map((item) => (
+                  <div key={item.label} className="st-menu-row" onClick={item.action} style={item.action ? { cursor: 'pointer' } : undefined}>
+                    <div className="st-menu-bar" style={{ background: item.vColor }} />
+                    <div className="set-row-icon">{item.icon}</div>
+                    <div className="set-row-copy">
+                      <div className="set-row-label">{item.label}</div>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: item.vColor }}>{item.value}</span>
+                    {item.action && <ChevronRight size={14} color="var(--text-tertiary)" className="st-menu-arrow" />}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="cv-card">
-              {coldTransactions.map((tx, i) => (
-                <React.Fragment key={`${tx.time}-${tx.asset}-${i}`}>
-                  <CvActivityRow tx={tx} />
-                  {i < coldTransactions.length - 1 && <CvDivider />}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
 
-          {/* Seedless & Recovery */}
-          <div className="cv-section">
+            {/* ── 6. Recent Activity — glass card section ── */}
+            <div className="set-menu-group">
+              <div className="sh-section-head">
+                <div className="section-title" style={{ margin: 0 }}>RECENT ACTIVITY</div>
+                <button type="button" className="cv-link" onClick={() => setColdView('activity')}>View All</button>
+              </div>
+              <div className="cv-card">
+                {coldTransactions.map((tx, i) => (
+                  <React.Fragment key={`${tx.time}-${tx.asset}-${i}`}>
+                    <CvActivityRow tx={tx} />
+                    {i < coldTransactions.length - 1 && <CvDivider />}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+
+            {/* ── 7. Recovery Note ── */}
             <div className="cv-note purple">
               <Database size={14} color="#c4b5fd" />
               <span>Seedless architecture — keys live in EAL6+ secure element. Recovery via card redundancy.</span>
             </div>
-            <div className="cv-action-pair">
-              <button type="button" className="cv-btn ghost bordered">Export Seed</button>
-              <button type="button" className="cv-btn ghost bordered">Import Seed</button>
+
+            {/* ── 8. Footer Stats ── */}
+            <div className="cm-net-stats">
+              <div className="cm-net-stat">
+                <Shield size={12} color="var(--gold)" />
+                <span>EAL6+</span>
+              </div>
+              <div className="cm-net-divider" />
+              <div className="cm-net-stat">
+                <CreditCard size={12} color="#10b981" />
+                <span>{pairedCards} Cards</span>
+              </div>
+              <div className="cm-net-divider" />
+              <div className="cm-net-stat">
+                <Lock size={12} color="#60a5fa" />
+                <span>NFC Signed</span>
+              </div>
             </div>
+
+            <div className="spacer-40"></div>
           </div>
-
-          <button type="button" className="cv-btn danger-link">Factory Reset Card</button>
-
-          <div style={{ height: 40 }}></div>
-        </>)}
+        )}
       </div>
     </motion.div>
   );

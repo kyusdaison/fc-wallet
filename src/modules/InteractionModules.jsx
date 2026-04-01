@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, Camera, CheckCircle2, ChevronDown, ChevronLeft, Fingerprint, QrCode, Scan, ShieldCheck } from 'lucide-react';
 import { CITIZEN_PROFILE } from '../data/mockData';

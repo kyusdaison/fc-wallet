@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { ChevronLeft, TrendingUp, Lock, Coins, Gift, CircleDollarSign, Percent, ChevronRight } from 'lucide-react';
 import { STAKING_POSITIONS, STAKING_SUMMARY } from '../data/mockData';
@@ -16,7 +15,7 @@ const StakingModule = ({ onClose }) => {
   };
 
   return (
-    <motion.div key="staking" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="module-content staking-shell" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <motion.div key="staking" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content staking-shell module-stack-lg">
       <button type="button" className="identity-back-link" onClick={onClose}>
         <ChevronLeft size={20} strokeWidth={2.5} />
         Back to Home

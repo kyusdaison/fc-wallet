@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { QrCode, ChevronDown, CheckCircle2, Shield } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { SheetCloseButtonV2, SheetTitleBlockV2, AssetSelectorOverlayV2 } from './SheetParts';
 import { CITIZEN_ASSETS } from '../data/mockData';

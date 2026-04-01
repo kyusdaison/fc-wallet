@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ChevronDown, CheckCircle2, Copy, Share2 } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { SheetCloseButtonV2, SheetTitleBlockV2, AssetSelectorOverlayV2 } from './SheetParts';
 
@@ -34,7 +33,7 @@ const ReceiveSheetV2 = ({ onClose }) => {
         handleCopy();
       }
     } catch (error) {
-      console.warn("Share failed or was canceled", error);
+      // Share API throws on user cancel — expected, no action needed
     }
   };
 

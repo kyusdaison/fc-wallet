@@ -1,6 +1,5 @@
 import React from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const SheetCloseButtonV2 = ({ onClick }) => (

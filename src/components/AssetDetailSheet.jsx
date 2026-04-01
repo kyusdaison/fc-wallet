@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ArrowUp, ArrowDown, ArrowRightLeft, ChevronLeft, TrendingUp, CheckCircle2 } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 
 const AssetDetailSheetV2 = ({ asset, onClose, onOpenSend, onOpenReceive }) => {

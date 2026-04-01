@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUp, ArrowDown, ArrowRightLeft, History, Bitcoin, CircleDollarSign, ChevronRight, Database, User, Building2, Shield, Fingerprint, ShieldCheck, CheckCircle2, FileSignature, Users, Activity, Banknote, TrendingUp, Coins, Gift } from 'lucide-react';
 import { CITIZEN_PROFILE, CITIZEN_PORTFOLIO, ORG_PROFILE, ORG_TREASURY, STAKING_SUMMARY, CITIZEN_ASSETS } from '../data/mockData';
+import { OnboardingChecklist } from '../components/EmptyStates';
 
 // --- Asset Icon Helper ---
 
@@ -27,14 +28,14 @@ const getAssetIcon = (iconType) => {
 const AssetSparkline = ({ sparkPath, sparkColor }) => {
   if (!sparkPath) {
     return (
-      <svg width="60" height="20" viewBox="0 0 60 20" style={{ flexShrink: 0 }}>
+      <svg width="60" height="20" viewBox="0 0 60 20" className="flex-shrink-0">
         <path d="M0,10 L60,10" fill="none" stroke={sparkColor} strokeWidth="1.5" strokeDasharray="3,3" opacity="0.5" />
       </svg>
     );
   }
 
   return (
-    <svg width="60" height="20" viewBox="0 0 60 20" style={{ flexShrink: 0 }}>
+    <svg width="60" height="20" viewBox="0 0 60 20" className="flex-shrink-0">
       <path d={sparkPath} fill="none" stroke={sparkColor} strokeWidth="1.5" className="sparkline-glow" />
     </svg>
   );
@@ -179,7 +180,7 @@ const HomeModule = ({ setActiveTab, onOpenSwap, onOpenHistory, onOpenSend, onOpe
   ];
 
   return (
-    <motion.div key="home" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} style={{display: 'flex', flexDirection: 'column', gap: '14px'}}>
+    <motion.div key="home" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-stack">
       <CitizenIdentitySummary setActiveTab={setActiveTab} />
 
       <div className="home-action-grid">
@@ -199,12 +200,26 @@ const HomeModule = ({ setActiveTab, onOpenSwap, onOpenHistory, onOpenSend, onOpe
         ))}
       </div>
 
+      {/* Onboarding Checklist — new user guidance */}
+      <OnboardingChecklist
+        steps={[
+          { id: 'identity', title: 'Verify Identity', subtitle: '~2 min · Biometric scan', done: true },
+          { id: 'fund', title: 'Fund Your Wallet', subtitle: 'Receive your first deposit', done: true },
+          { id: 'vault', title: 'Set Up Cold Vault', subtitle: 'Secure long-term holdings', done: false },
+          { id: 'stake', title: 'Start Staking', subtitle: 'Earn network rewards', done: false },
+        ]}
+        onStepClick={(step) => {
+          if (step.id === 'vault') onOpenColdVault?.();
+          if (step.id === 'stake') onOpenStaking?.();
+        }}
+      />
+
       <div className="portfolio-hero">
         <div className="portfolio-hero-header">
           <div>
             <div className="portfolio-hero-kicker">PORTFOLIO BALANCE</div>
-            <div style={{ marginTop: '6px' }}>
-              <span className="dash-pill-active"><div className="pulse-dot"></div> <span style={{marginTop: '1px'}}>Network Sync</span></span>
+            <div className="mt-6">
+              <span className="dash-pill-active"><div className="pulse-dot"></div> <span className="mt-1">Network Sync</span></span>
             </div>
           </div>
           <div className="portfolio-range-switch">
@@ -244,61 +259,37 @@ const HomeModule = ({ setActiveTab, onOpenSwap, onOpenHistory, onOpenSend, onOpe
         </div>
       </div>
 
-      <div className="cold-vault-portal" onClick={onOpenColdVault}>
-        <div className="vault-decoration-line"></div>
-        <div className="vault-decoration-line-2"></div>
-        <div className="vault-topline">
-          <span className="vault-kicker">DEEP STORAGE ACCESS</span>
-          <span className="vault-status">NFC HARDENED</span>
-        </div>
-
-        <div className="vault-portal-content">
-          <div className="vault-icon-container">
-            <div className="vault-pulse-ring"></div>
-            <Database size={24} color="#60A5FA" strokeWidth={1.5} />
-          </div>
-          <div className="vault-text-content">
-            <div className="vault-title">HARDWARE COLD VAULT</div>
-            <div className="vault-subtitle">Air-gapped signing for high-value custody</div>
-          </div>
-          <div className="vault-arrow">
-            <ChevronRight size={20} color="#3B82F6" />
-          </div>
-        </div>
-        <div className="vault-balance-strip">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-            <span className="vault-strip-label">SECURED ASSETS</span>
-            <span className="vault-strip-meta">{CITIZEN_PORTFOLIO.coldVaultPct} of protected net worth</span>
-          </div>
-          <span className="vault-strip-amount">{CITIZEN_PORTFOLIO.coldVaultBalance}</span>
+      {/* Earn & Protect — merged Cold Vault + Staking */}
+      <div className="ep-section">
+        <div className="ep-section-title">EARN & PROTECT</div>
+        <div className="ep-grid">
+          <button type="button" className="ep-card ep-vault" onClick={onOpenColdVault}>
+            <div className="ep-card-icon ep-icon-blue">
+              <Database size={18} color="#60A5FA" strokeWidth={1.5} />
+            </div>
+            <div className="ep-card-copy">
+              <div className="ep-card-title">Cold Vault</div>
+              <div className="ep-card-value">{CITIZEN_PORTFOLIO.coldVaultBalance}</div>
+              <div className="ep-card-meta">{CITIZEN_PORTFOLIO.coldVaultPct} secured</div>
+            </div>
+            <ChevronRight size={16} color="var(--text-tertiary)" className="ep-arrow" />
+          </button>
+          <button type="button" className="ep-card ep-staking" onClick={onOpenStaking}>
+            <div className="ep-card-icon ep-icon-gold">
+              <Coins size={18} color="var(--gold)" />
+            </div>
+            <div className="ep-card-copy">
+              <div className="ep-card-title">Staking</div>
+              <div className="ep-card-value">{STAKING_SUMMARY.totalStaked}</div>
+              <div className="ep-card-meta">
+                <TrendingUp size={10} color="var(--green)" />
+                {STAKING_SUMMARY.avgApy} · <Gift size={10} /> {STAKING_SUMMARY.totalRewards}
+              </div>
+            </div>
+            <ChevronRight size={16} color="var(--text-tertiary)" className="ep-arrow" />
+          </button>
         </div>
       </div>
-
-      <button type="button" className="staking-portal" onClick={onOpenStaking}>
-        <div className="staking-portal-top">
-          <div className="staking-portal-icon">
-            <Coins size={20} color="var(--gold)" />
-          </div>
-          <div className="staking-portal-copy">
-            <div className="staking-portal-title">Staking & Yield</div>
-            <div className="staking-portal-subtitle">{STAKING_SUMMARY.positions} active positions</div>
-          </div>
-          <div className="staking-portal-apy">
-            <TrendingUp size={14} color="var(--green)" />
-            {STAKING_SUMMARY.avgApy}
-          </div>
-        </div>
-        <div className="staking-portal-stats">
-          <div className="staking-portal-stat">
-            <span>Total Staked</span>
-            <strong>{STAKING_SUMMARY.totalStaked}</strong>
-          </div>
-          <div className="staking-portal-stat">
-            <span>Pending Rewards</span>
-            <strong className="staking-reward-value"><Gift size={12} /> {STAKING_SUMMARY.totalRewards}</strong>
-          </div>
-        </div>
-      </button>
 
     {/* My Assets - Grouped Container */}
     <div>
@@ -339,7 +330,7 @@ const HomeModule = ({ setActiveTab, onOpenSwap, onOpenHistory, onOpenSend, onOpe
       <div className="request-section">
         <div className="asset-section-header">
           <div>
-            <div className="section-title" style={{ margin: 0 }}>TRUST REQUESTS</div>
+            <div className="section-title section-title-flush">TRUST REQUESTS</div>
             <div className="asset-section-subtitle">Priority identity actions waiting for review</div>
           </div>
           <div className="asset-section-count">1 pending</div>
@@ -426,7 +417,7 @@ const OrgHomeModule = ({ setActiveTab, onOpenSwap, onOpenMultiSig }) => {
   ];
 
   return (
-    <motion.div key="org" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} className="oh-org-wrapper">
+    <motion.div key="org" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="oh-org-wrapper">
       <OrgIdentitySummary setActiveTab={setActiveTab} />
 
       <div className="home-action-grid">

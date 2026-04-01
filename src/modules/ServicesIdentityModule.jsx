@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { ArrowRightLeft, Building2, Calendar, Car, CheckCircle2, ChevronLeft, ChevronRight, Clock, CreditCard, Database, Download, Eye, EyeOff, FileText, Fingerprint, Globe, GraduationCap, Hash, Heart, Home as HomeIcon, IdCard, Landmark, Lock, Mail, MapPin, Phone, QrCode, Scan, Search, Share2, Shield, ShieldCheck, Sparkles, Upload, User, Vote } from 'lucide-react';
+import { ArrowRightLeft, Building2, Calendar, Car, CheckCircle2, ChevronLeft, ChevronRight, Clock, CreditCard, Database, Download, Eye, EyeOff, FileText, Fingerprint, Globe, GraduationCap, Hash, Heart, Home as HomeIcon, IdCard, Landmark, Lock, Mail, MapPin, Phone, QrCode, Radio, Scan, Search, Server, Share2, Shield, ShieldCheck, Sparkles, Upload, User, Vote, Wifi, Zap } from 'lucide-react';
 import { CITIZEN_PROFILE } from '../data/mockData';
 
 const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
@@ -9,20 +8,20 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
 
   /* ---- Government Services ---- */
   const govServices = [
-    { id: 'governance', title: 'Governance', subtitle: '3 active proposals', icon: <Vote size={18} color="#c4b5fd" />, tone: 'purple', badge: '3', action: onOpenGovernance },
-    { id: 'gov-portal', title: 'Gov Portal', subtitle: 'Citizen services', icon: <Landmark size={18} color="#f5d46b" />, tone: 'gold' },
-    { id: 'tax', title: 'Tax & Revenue', subtitle: 'Filing & compliance', icon: <FileText size={18} color="#93c5fd" />, tone: 'blue' },
-    { id: 'immigration', title: 'Immigration', subtitle: 'Visa & residency', icon: <Globe size={18} color="#6ee7b7" />, tone: 'green' },
+    { id: 'governance', title: 'Governance', subtitle: '3 active proposals', icon: <Vote size={18} color="#c4b5fd" />, tone: 'purple', badge: '3', action: onOpenGovernance, status: { label: 'Vote open', type: 'live' } },
+    { id: 'gov-portal', title: 'Gov Portal', subtitle: 'Citizen services', icon: <Landmark size={18} color="#f5d46b" />, tone: 'gold', status: { label: '2 pending', type: 'warn' } },
+    { id: 'tax', title: 'Tax & Revenue', subtitle: 'Filing & compliance', icon: <FileText size={18} color="#93c5fd" />, tone: 'blue', status: { label: 'Filed', type: 'ok' } },
+    { id: 'immigration', title: 'Immigration', subtitle: 'Visa & residency', icon: <Globe size={18} color="#6ee7b7" />, tone: 'green', status: { label: 'Active', type: 'ok' } },
     { id: 'registry', title: 'Corp Registry', subtitle: 'Business portal', icon: <Building2 size={18} color="#6ee7b7" />, tone: 'green' },
     { id: 'legal', title: 'Legal Aid', subtitle: 'Dispute resolution', icon: <Shield size={18} color="#fca5a5" />, tone: 'red' },
   ];
 
   /* ---- Financial Services ---- */
   const finServices = [
-    { id: 'bridge', title: 'Cross-Chain Bridge', subtitle: '4 routes active', icon: <ArrowRightLeft size={18} color="#93c5fd" />, tone: 'blue', action: onOpenBridge },
+    { id: 'bridge', title: 'Cross-Chain Bridge', subtitle: '4 routes active', icon: <ArrowRightLeft size={18} color="#93c5fd" />, tone: 'blue', action: onOpenBridge, status: { label: 'Live', type: 'live' } },
     { id: 'explorer', title: 'FC Explorer', subtitle: 'Block explorer', icon: <Globe size={18} color="#93c5fd" />, tone: 'blue' },
-    { id: 'zkp', title: 'ZKP Studio', subtitle: 'Proof generator', icon: <ShieldCheck size={18} color="#c4b5fd" />, tone: 'purple' },
-    { id: 'lending', title: 'Sovereign Lending', subtitle: 'Collateral loans', icon: <CreditCard size={18} color="#f5d46b" />, tone: 'gold' },
+    { id: 'zkp', title: 'ZKP Studio', subtitle: 'Proof generator', icon: <ShieldCheck size={18} color="#c4b5fd" />, tone: 'purple', status: { label: '1 request', type: 'warn' } },
+    { id: 'lending', title: 'Sovereign Lending', subtitle: 'Collateral loans', icon: <CreditCard size={18} color="#f5d46b" />, tone: 'gold', status: { label: 'Pre-qualify', type: 'info' } },
   ];
 
   /* ---- Digital Assets / Collectibles ---- */
@@ -47,19 +46,72 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
   const matchRwa = rwaAssets.filter(a => !q || a.title.toLowerCase().includes(q));
   const totalResults = matchGov.length + matchFin.length + matchNft.length + matchRwa.length;
 
-  return (
-    <motion.div key="services" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+  const toneColor = (tone) => {
+    switch (tone) {
+      case 'purple': return '#c4b5fd';
+      case 'gold': return 'var(--gold)';
+      case 'blue': return 'var(--blue)';
+      case 'green': return 'var(--green)';
+      case 'red': return '#fca5a5';
+      default: return 'var(--text-muted)';
+    }
+  };
 
-      {/* Compact Header */}
-      <div className="svc-header">
-        <div>
-          <div className="svc-header-title">Services</div>
-          <div className="svc-header-subtitle">Sovereign service hub · {govServices.length + finServices.length} services</div>
+  const SVC_ACTIONS = [
+    { id: 'gov', title: 'Gov Portal', subtitle: 'Citizen services', icon: <Landmark size={20} color="#f5d46b" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary' },
+    { id: 'bridge', title: 'Bridge', subtitle: 'Cross-chain', icon: <ArrowRightLeft size={20} color="var(--blue)" />, iconClass: 'cm-icon-blue', toneClass: 'tone-blue', emphasis: 'primary', action: onOpenBridge },
+    { id: 'zkp', title: 'ZKP Studio', subtitle: 'Proof engine', icon: <ShieldCheck size={20} color="#c4b5fd" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary' },
+    { id: 'explore', title: 'Explorer', subtitle: 'Browse chain', icon: <Globe size={20} color="var(--text-dark)" />, iconClass: 'cm-icon-slate', toneClass: 'tone-slate', emphasis: 'secondary' },
+  ];
+
+  const pendingCount = govServices.filter(s => s.status?.type === 'warn').length + finServices.filter(s => s.status?.type === 'warn').length;
+
+  return (
+    <motion.div key="services" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content module-stack-sm">
+
+      {/* ── 1. Services Hero Card ── */}
+      <div className="sh-hero">
+        <div className="sh-hero-glow" />
+        <div className="sh-hero-top">
+          <div>
+            <div className="sh-hero-kicker">SOVEREIGN HUB</div>
+            <div className="sh-hero-title">Services</div>
+          </div>
+          <div className="sh-hero-badge">
+            <div className="sh-hero-pulse" />
+            <Sparkles size={11} />
+            All active
+          </div>
         </div>
-        <div className="svc-header-badge">
-          <Sparkles size={12} />
-          {q ? `${totalResults} found` : 'All active'}
+        <div className="sh-hero-stats">
+          <div className="sh-hero-stat">
+            <span className="sh-stat-value">{govServices.length}</span>
+            <span className="sh-stat-label">Gov</span>
+          </div>
+          <div className="sh-hero-stat-divider" />
+          <div className="sh-hero-stat">
+            <span className="sh-stat-value">{finServices.length}</span>
+            <span className="sh-stat-label">Financial</span>
+          </div>
+          <div className="sh-hero-stat-divider" />
+          <div className="sh-hero-stat">
+            <span className="sh-stat-value">{digitalAssets.length}</span>
+            <span className="sh-stat-label">Digital</span>
+          </div>
         </div>
+      </div>
+
+      {/* ── 2. Quick Actions ── */}
+      <div className="home-action-grid">
+        {SVC_ACTIONS.map((a) => (
+          <button key={a.id} type="button" className={`home-action-btn ${a.emphasis} ${a.toneClass}`} onClick={a.action || undefined}>
+            <div className={`icon-wrap ${a.iconClass}`}>{a.icon}</div>
+            <div className="home-action-copy">
+              <span className="home-action-title">{a.title}</span>
+              <span className="home-action-subtitle">{a.subtitle}</span>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* Search */}
@@ -68,36 +120,49 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
         <input type="text" value={serviceQuery} onChange={e => setServiceQuery(e.target.value)} placeholder="Search services..." className="svc-search-input" />
       </div>
 
-      {/* ========== SECTION 1: Government Services ========== */}
+      {/* ========== SECTION 1: Government Services — glass card rows ========== */}
       {matchGov.length > 0 && (
         <div className="svc-section">
-          <div className="section-title">GOVERNMENT SERVICES</div>
-          <div className="svc-list">
+          <div className="sh-section-head">
+            <div className="section-title" style={{ margin: 0 }}>GOVERNMENT SERVICES</div>
+            <span className="sh-section-count">{matchGov.length} services</span>
+          </div>
+          <div className="sh-gov-list">
             {matchGov.map(svc => (
-              <button key={svc.id} type="button" className="svc-row" onClick={svc.action || undefined}>
+              <button key={svc.id} type="button" className={`sh-gov-row ${svc.status?.type === 'live' ? 'live' : ''}`} onClick={svc.action || undefined}>
+                <div className="sh-gov-bar" style={{ background: toneColor(svc.tone) }} />
                 <div className={`svc-row-icon ${svc.tone}`}>{svc.icon}</div>
                 <div className="svc-row-copy">
                   <div className="svc-row-title">{svc.title}</div>
                   <div className="svc-row-sub">{svc.subtitle}</div>
                 </div>
+                {svc.status && <span className={`svc-row-status ${svc.status.type}`}>{svc.status.label}</span>}
                 {svc.badge && <span className="svc-row-badge">{svc.badge}</span>}
-                <ChevronRight size={16} color="var(--text-tertiary)" />
+                <ChevronRight size={14} color="var(--text-tertiary)" className="sh-row-arrow" />
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* ========== SECTION 2: Financial Services ========== */}
+      {/* ========== SECTION 2: Financial Services — gradient mini cards ========== */}
       {matchFin.length > 0 && (
         <div className="svc-section">
-          <div className="section-title">FINANCIAL SERVICES</div>
+          <div className="sh-section-head">
+            <div className="section-title" style={{ margin: 0 }}>FINANCIAL SERVICES</div>
+            <span className="sh-section-count">{matchFin.length} services</span>
+          </div>
           <div className="svc-grid">
             {matchFin.map(svc => (
-              <button key={svc.id} type="button" className={`svc-card ${svc.tone}`} onClick={svc.action || undefined}>
-                <div className="svc-card-icon">{svc.icon}</div>
+              <button key={svc.id} type="button" className={`svc-card sh-fin-card ${svc.tone}`} onClick={svc.action || undefined}>
+                <div className="sh-fin-glow" />
+                <div className="svc-card-top">
+                  <div className="svc-card-icon">{svc.icon}</div>
+                  {svc.status && <span className={`svc-card-status ${svc.status.type}`}>{svc.status.label}</span>}
+                </div>
                 <div className="svc-card-title">{svc.title}</div>
                 <div className="svc-card-sub">{svc.subtitle}</div>
+                <div className="sh-fin-accent" style={{ background: `linear-gradient(90deg, ${toneColor(svc.tone)}, transparent)` }} />
               </button>
             ))}
           </div>
@@ -107,9 +172,11 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
       {/* ========== SECTION 3: Digital Assets & RWA ========== */}
       {(matchNft.length > 0 || matchRwa.length > 0) && (
         <div className="svc-section">
-          <div className="section-title">DIGITAL ASSETS</div>
+          <div className="sh-section-head">
+            <div className="section-title" style={{ margin: 0 }}>DIGITAL ASSETS</div>
+            <span className="sh-section-count">{matchNft.length + matchRwa.length} items</span>
+          </div>
 
-          {/* NFT / Badge Scroll Strip */}
           {matchNft.length > 0 && (
             <div className="svc-nft-strip">
               {matchNft.map(nft => (
@@ -126,7 +193,6 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
             </div>
           )}
 
-          {/* RWA Compact List */}
           {matchRwa.length > 0 && (
             <div className="svc-rwa-list">
               {matchRwa.map(asset => (
@@ -144,11 +210,30 @@ const ServicesModule = ({ onOpenBridge, onOpenGovernance }) => {
         </div>
       )}
 
+      {/* ── 5. Hub Stats Footer ── */}
+      <div className="cm-net-stats">
+        <div className="cm-net-stat">
+          <Server size={12} color="var(--green)" />
+          <span>{govServices.length + finServices.length} Active</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <Zap size={12} color="var(--gold)" />
+          <span>{pendingCount} Pending</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <ShieldCheck size={12} color="var(--blue)" />
+          <span>ZKP Ready</span>
+        </div>
+      </div>
+
       {/* Empty State */}
       {q && totalResults === 0 && (
-        <div className="svc-empty">
-          <Sparkles size={24} color="#93c5fd" />
-          <span>No services match your search.</span>
+        <div className="empty-state">
+          <div className="empty-state-icon"><Sparkles size={22} /></div>
+          <div className="empty-state-title">No services found</div>
+          <div className="empty-state-copy">Try a different keyword or browse categories above.</div>
         </div>
       )}
     </motion.div>
@@ -221,7 +306,7 @@ const IdentityModule = ({ onOpenZkp }) => {
     ];
 
     return (
-      <motion.div key="doc-detail" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="module-content identity-shell" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <motion.div key="doc-detail" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content identity-shell module-stack-xl">
         <button type="button" className="identity-back-link" onClick={() => { setIdentityView('main'); setSelectedDoc(null); }}>
           <ChevronLeft size={20} strokeWidth={2.5} />
           Back to Identity Vault
@@ -301,7 +386,7 @@ const IdentityModule = ({ onOpenZkp }) => {
 
   // Main Identity View
   return (
-    <motion.div key="identity" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content identity-shell" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+    <motion.div key="identity" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content identity-shell module-stack">
 
       {/* === Sovereign ID Card === */}
       <div className="id-card">

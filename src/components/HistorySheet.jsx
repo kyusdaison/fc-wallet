@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { ShieldCheck, ArrowUp, ArrowDown, ArrowRightLeft, Search, X, Filter } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { SheetCloseButtonV2, SheetTitleBlockV2 } from './SheetParts';
 

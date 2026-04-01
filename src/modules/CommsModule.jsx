@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, ArrowUp, Banknote, Bell, Building2, CheckCircle2, ChevronDown, ChevronLeft, CircleDollarSign, Fingerprint, MessageSquare, Phone, QrCode, Search, Share2, Shield, ShieldCheck, Users, Vote, X, BookUser } from 'lucide-react';
+import { Activity, ArrowUp, Banknote, Bell, Building2, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleDollarSign, Fingerprint, Lock, MessageSquare, Phone, Pin, Plus, QrCode, Radio, Search, Send, Share2, Shield, ShieldCheck, Users, Vote, Wifi, X, BookUser, Zap } from 'lucide-react';
 import { CITIZEN_ALERTS, CITIZEN_CHAT_CONTACTS } from '../data/mockData';
 
 /* =========================================================
@@ -70,19 +69,46 @@ const AlertsModule = ({ compact }) => {
 };
 
 /* =========================================================
-   ChatsModule — compact, with contact directory
+   ChatsModule — redesigned to match Home page richness
    ========================================================= */
+const TAG_FILTERS = [
+  { key: 'all', label: 'All' },
+  { key: 'pinned', label: 'Pinned' },
+  { key: 'work', label: 'Work' },
+  { key: 'personal', label: 'Personal' },
+  { key: 'gov', label: 'Gov' },
+];
+
+const COMMS_ACTIONS = [
+  { id: 'new', title: 'New Chat', subtitle: 'Start encrypted', icon: <Plus size={20} color="var(--blue)" />, iconClass: 'cm-icon-blue', toneClass: 'tone-blue', emphasis: 'primary' },
+  { id: 'send', title: 'Pay', subtitle: 'Send FCUSD', icon: <Send size={20} color="var(--green)" />, iconClass: 'cm-icon-green', toneClass: 'tone-green', emphasis: 'primary' },
+  { id: 'scan', title: 'Scan', subtitle: 'QR connect', icon: <QrCode size={20} color="var(--purple, #8B5CF6)" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary' },
+  { id: 'contacts', title: 'Contacts', subtitle: 'Directory', icon: <BookUser size={20} color="var(--text-dark)" />, iconClass: 'cm-icon-slate', toneClass: 'tone-slate', emphasis: 'secondary' },
+];
+
+const getMsgTypeColor = (tag) => {
+  switch (tag) {
+    case 'work': return 'var(--blue)';
+    case 'gov': return 'var(--gold)';
+    case 'personal': return 'var(--green)';
+    default: return 'var(--text-muted)';
+  }
+};
+
 const ChatsModule = ({ onSelectChat, onOpenScanner }) => {
   const [chatQuery, setChatQuery] = useState('');
   const [showDirectory, setShowDirectory] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
 
   const contacts = CITIZEN_CHAT_CONTACTS;
   const totalUnread = contacts.reduce((count, contact) => count + contact.unread, 0);
+  const paymentThreads = contacts.filter(c => c.lastMsgType === 'payment').length;
 
   const filteredContacts = contacts.filter((contact) => {
     const query = chatQuery.trim().toLowerCase();
-    if (!query) return true;
-    return contact.name.toLowerCase().includes(query) || contact.lastMsg.toLowerCase().includes(query);
+    const matchesQuery = !query || contact.name.toLowerCase().includes(query) || contact.lastMsg.toLowerCase().includes(query);
+    const matchesFilter = activeFilter === 'all' || (activeFilter === 'pinned' ? contact.pinned : contact.tag === activeFilter);
+    return matchesQuery && matchesFilter;
   });
 
   // Directory: all contacts sorted alphabetically
@@ -93,23 +119,57 @@ const ChatsModule = ({ onSelectChat, onOpenScanner }) => {
     return contact.name.toLowerCase().includes(query);
   });
 
-  return (
-    <motion.div key="chats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="module-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+  const handleAction = (id) => {
+    if (id === 'scan') onOpenScanner?.();
+    if (id === 'contacts') setShowDirectory(prev => !prev);
+  };
 
-      {/* Compact header row */}
-      <div className="chat-compact-header">
-        <div>
-          <div className="chat-compact-title">Messages</div>
-          <div className="chat-compact-subtitle">{totalUnread > 0 ? `${totalUnread} unread` : 'All read'} · {contacts.length} contacts</div>
+  return (
+    <motion.div key="chats" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content module-stack-sm">
+
+      {/* ── 1. Comms Hero Card ── */}
+      <div className="cm-hero">
+        <div className="cm-hero-glow" />
+        <div className="cm-hero-top">
+          <div>
+            <div className="cm-hero-kicker">SOVEREIGN RELAY</div>
+            <div className="cm-hero-title">Messages</div>
+          </div>
+          <div className="cm-hero-badge">
+            <div className="cm-hero-pulse" />
+            <Lock size={11} />
+            ZK Encrypted
+          </div>
         </div>
-        <div className="chat-compact-actions">
-          <button type="button" className={`chat-dir-toggle ${showDirectory ? 'active' : ''}`} onClick={() => setShowDirectory(!showDirectory)}>
-            <BookUser size={18} />
-          </button>
-          <button type="button" className="chat-scan-btn compact" onClick={onOpenScanner}>
-            <QrCode size={18} color="white" />
-          </button>
+        <div className="cm-hero-stats">
+          <div className="cm-hero-stat">
+            <span className="cm-stat-value">{contacts.length}</span>
+            <span className="cm-stat-label">Peers</span>
+          </div>
+          <div className="cm-hero-stat-divider" />
+          <div className="cm-hero-stat">
+            <span className="cm-stat-value">{totalUnread}</span>
+            <span className="cm-stat-label">Unread</span>
+          </div>
+          <div className="cm-hero-stat-divider" />
+          <div className="cm-hero-stat">
+            <span className="cm-stat-value">{paymentThreads}</span>
+            <span className="cm-stat-label">Payments</span>
+          </div>
         </div>
+      </div>
+
+      {/* ── 2. Quick Actions ── */}
+      <div className="home-action-grid">
+        {COMMS_ACTIONS.map((action) => (
+          <button key={action.id} type="button" className={`home-action-btn ${action.emphasis} ${action.toneClass}`} onClick={() => handleAction(action.id)}>
+            <div className={`icon-wrap ${action.iconClass}`}>{action.icon}</div>
+            <div className="home-action-copy">
+              <span className="home-action-title">{action.title}</span>
+              <span className="home-action-subtitle">{action.subtitle}</span>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* Search */}
@@ -143,63 +203,115 @@ const ChatsModule = ({ onSelectChat, onOpenScanner }) => {
         </div>
       )}
 
-      {/* Active Now strip */}
+      {/* Filter Chips */}
       {!showDirectory && (
+        <div className="comms-filter-strip">
+          {TAG_FILTERS.map(f => (
+            <button key={f.key} type="button" className={`comms-filter-chip ${activeFilter === f.key ? 'active' : ''}`} onClick={() => setActiveFilter(f.key)}>
+              {f.key === 'pinned' && <Pin size={10} />}
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ── 3. Active Now — upgraded glass panel ── */}
+      {!showDirectory && activeFilter === 'all' && (
         <>
-          <div>
-            <div className="section-title" style={{ marginBottom: '8px' }}>ACTIVE NOW</div>
-            <div className="chat-orbit-strip compact">
+          <div className="cm-active-panel">
+            <div className="cm-active-header">
+              <div className="section-title" style={{ margin: 0 }}>ACTIVE NOW</div>
+              <span className="cm-active-count">{contacts.filter(c => c.unread > 0 || contacts.indexOf(c) < 3).slice(0, 4).length} online</span>
+            </div>
+            <div className="cm-active-strip">
               {contacts.filter(c => c.unread > 0 || contacts.indexOf(c) < 3).slice(0, 4).map((contact) => (
-                <button key={contact.id} type="button" className="chat-orbit-pill compact" onClick={() => onSelectChat(contact)}>
-                  <div className="chat-orbit-avatar-wrap compact">
-                    <img src={contact.avatar} alt={contact.name} className="chat-orbit-avatar compact" />
-                    <span className="chat-orbit-status"></span>
+                <button key={contact.id} type="button" className="cm-active-pill" onClick={() => onSelectChat(contact)}>
+                  <div className="cm-active-avatar-wrap">
+                    <img src={contact.avatar} alt={contact.name} className="cm-active-avatar" />
+                    <span className="cm-active-dot" />
                   </div>
-                  <span className="chat-orbit-name">{contact.name.split(' ')[0]}</span>
+                  <span className="cm-active-name">{contact.name.split(' ')[0]}</span>
+                  <span className="cm-active-time">now</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Recent Chats */}
+          {/* ── 4. Recent Chats — enhanced glass rows ── */}
           <div>
-            <div className="section-title" style={{ marginBottom: '8px' }}>RECENT CHATS</div>
-            <div className="chat-list-shell compact">
-              {filteredContacts.map((contact, index) => (
-                <div key={contact.id}>
-                  <button type="button" className="chat-row compact" onClick={() => onSelectChat(contact)}>
-                    <div className="chat-row-avatar-wrap">
-                      <img src={contact.avatar} alt={contact.name} className="chat-row-avatar compact" />
-                      <span className="chat-row-verified compact"><CheckCircle2 size={10} color="var(--green)" /></span>
-                    </div>
-                    <div className="chat-row-copy">
-                      <div className="chat-row-meta">
-                        <div className="chat-row-name compact">{contact.name}</div>
-                        <div className={`chat-row-time ${contact.unread > 0 ? 'active' : ''}`}>{contact.time}</div>
+            <div className="cm-section-head">
+              <div className="section-title" style={{ margin: 0 }}>RECENT CHATS</div>
+              <span className="cm-section-count">{filteredContacts.length} threads</span>
+            </div>
+            <div className="cm-chat-list">
+              {filteredContacts.map((contact) => (
+                <button key={contact.id} type="button" className={`cm-chat-row ${contact.unread > 0 ? 'unread' : ''}`} onClick={() => onSelectChat(contact)}>
+                  <div className="cm-chat-type-bar" style={{ background: getMsgTypeColor(contact.tag) }} />
+                  <div className="cm-chat-avatar-wrap">
+                    <img src={contact.avatar} alt={contact.name} className="cm-chat-avatar" />
+                    <span className="cm-chat-verified"><CheckCircle2 size={10} color="var(--green)" /></span>
+                  </div>
+                  <div className="cm-chat-copy">
+                    <div className="cm-chat-meta-row">
+                      <div className="cm-chat-name">
+                        {contact.pinned && <Pin size={10} color="var(--gold)" className="chat-pin-icon" />}
+                        {contact.name}
                       </div>
-                      <div className="chat-row-message compact">
-                        <div className="chat-row-message-copy compact">
-                          {contact.lastMsgType === 'payment' ? <Banknote size={12} color="var(--blue)" /> : null}
-                          {contact.lastMsg}
-                        </div>
-                        {contact.unread > 0 ? <span className="chat-row-unread compact">{contact.unread}</span> : null}
-                      </div>
+                      <div className={`cm-chat-time ${contact.unread > 0 ? 'active' : ''}`}>{contact.time}</div>
                     </div>
-                  </button>
-                  {index < filteredContacts.length - 1 ? <div className="chat-row-divider compact"></div> : null}
-                </div>
+                    <div className="cm-chat-msg-row">
+                      <div className="cm-chat-msg">
+                        {contact.lastMsgType === 'payment' && <Banknote size={12} color="var(--blue)" />}
+                        {contact.lastMsg}
+                      </div>
+                      {contact.unread > 0 && <span className="cm-chat-unread">{contact.unread}</span>}
+                    </div>
+                  </div>
+                  <ChevronRight size={14} color="var(--text-tertiary)" className="cm-chat-arrow" />
+                </button>
               ))}
 
               {filteredContacts.length === 0 && (
                 <div className="signal-empty-state compact">
                   <MessageSquare size={32} color="var(--blue)" />
-                  <div className="signal-empty-title">No matches</div>
-                  <div className="signal-empty-copy">Try another name or keyword.</div>
+                  <div className="signal-empty-title">{chatQuery ? 'No matches' : 'No chats here'}</div>
+                  <div className="signal-empty-copy">
+                    {chatQuery
+                      ? 'Try another name or keyword.'
+                      : activeFilter === 'pinned'
+                        ? 'Pin important conversations for quick access.'
+                        : `No ${activeFilter} conversations yet.`}
+                  </div>
+                  {activeFilter !== 'all' && !chatQuery && (
+                    <button type="button" className="es-action-btn secondary" style={{ marginTop: 12, fontSize: 11 }} onClick={() => setActiveFilter('all')}>
+                      View all chats
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
         </>
+      )}
+
+      {/* ── 5. Network Stats Footer ── */}
+      {!showDirectory && (
+        <div className="cm-net-stats">
+          <div className="cm-net-stat">
+            <Radio size={12} color="var(--green)" />
+            <span>ZK Relay Active</span>
+          </div>
+          <div className="cm-net-divider" />
+          <div className="cm-net-stat">
+            <ShieldCheck size={12} color="var(--blue)" />
+            <span>{contacts.length} verified peers</span>
+          </div>
+          <div className="cm-net-divider" />
+          <div className="cm-net-stat">
+            <Wifi size={12} color="var(--gold)" />
+            <span>L3 mesh</span>
+          </div>
+        </div>
       )}
     </motion.div>
   );

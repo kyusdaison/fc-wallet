@@ -9,7 +9,12 @@ import {
   AlertCircle,
   Clock,
   DollarSign,
+  Lock,
   PieChart,
+  Server,
+  ShieldCheck,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 import { ORG_CHARTER, ORG_EQUITY, ORG_REVENUE, ORG_CREDENTIALS } from '../data/mockData';
 
@@ -59,22 +64,60 @@ const OrgServicesModule = () => {
 
   return (
     <motion.div
-      className="os-page"
-      initial={{ opacity: 0, x: 20 }}
+      className="module-content module-stack-sm os-page"
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      exit={{ opacity: 0, x: -16 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
-      {/* ========== HEADER ========== */}
-      <div className="os-header">
-        <div>
-          <div className="os-header-title">Enterprise Registry</div>
-          <div className="os-header-subtitle">Charter, equity & credentials · NexaCorp Limited</div>
+      {/* ── 1. Gold Glass Hero Card ── */}
+      <div className="og-hero">
+        <div className="og-hero-glow" />
+        <div className="og-hero-top">
+          <div>
+            <div className="og-hero-kicker">ENTERPRISE REGISTRY</div>
+            <div className="og-hero-title">Services</div>
+          </div>
+          <div className="og-hero-badge">
+            <div className="og-hero-pulse" />
+            <Sparkles size={11} />
+            Active
+          </div>
         </div>
-        <div className="os-header-badge">
-          <Building2 size={12} />
-          4 Items
+        <div className="og-hero-stats">
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{ORG_CHARTER.charterStatus === 'Active — Good Standing' ? '✓' : '—'}</span>
+            <span className="og-stat-label">Charter</span>
+          </div>
+          <div className="og-hero-stat-divider" />
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{ORG_EQUITY.length}</span>
+            <span className="og-stat-label">Holders</span>
+          </div>
+          <div className="og-hero-stat-divider" />
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{ORG_CREDENTIALS.length}</span>
+            <span className="og-stat-label">Credentials</span>
+          </div>
         </div>
+      </div>
+
+      {/* ── 2. Quick Actions ── */}
+      <div className="home-action-grid">
+        {[
+          { id: 'charter', title: 'Charter', subtitle: 'Corp details', icon: <Building2 size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary' },
+          { id: 'equity', title: 'Equity', subtitle: 'Shareholders', icon: <PieChart size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary' },
+          { id: 'revenue', title: 'Revenue', subtitle: 'Distributions', icon: <TrendingUp size={20} color="#10b981" />, iconClass: 'cm-icon-green', toneClass: 'tone-green', emphasis: 'secondary' },
+          { id: 'creds', title: 'Credentials', subtitle: 'Licenses', icon: <Shield size={20} color="#8b5cf6" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary' },
+        ].map((a) => (
+          <button key={a.id} type="button" className={`home-action-btn ${a.emphasis} ${a.toneClass}`}>
+            <div className={`icon-wrap ${a.iconClass}`}>{a.icon}</div>
+            <div className="home-action-copy">
+              <span className="home-action-title">{a.title}</span>
+              <span className="home-action-subtitle">{a.subtitle}</span>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* ========== COMPANY CHARTER ========== */}
@@ -210,9 +253,12 @@ const OrgServicesModule = () => {
 
       {/* ========== ENTERPRISE CREDENTIALS ========== */}
       <div className="os-section">
-        <div className="os-label">
-          <Shield size={13} />
-          ENTERPRISE CREDENTIALS
+        <div className="sh-section-head">
+          <div className="os-label" style={{ margin: 0 }}>
+            <Shield size={13} />
+            ENTERPRISE CREDENTIALS
+          </div>
+          <span className="sh-section-count">{ORG_CREDENTIALS.length} items</span>
         </div>
         <div className="os-card">
           {ORG_CREDENTIALS.map((c, i) => (
@@ -240,6 +286,24 @@ const OrgServicesModule = () => {
               </div>
             </React.Fragment>
           ))}
+        </div>
+      </div>
+
+      {/* ── Footer Stats ── */}
+      <div className="cm-net-stats">
+        <div className="cm-net-stat">
+          <Building2 size={12} color="var(--gold)" />
+          <span>Active Entity</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <Shield size={12} color="var(--gold)" />
+          <span>{ORG_CREDENTIALS.length} Credentials</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <ShieldCheck size={12} color="var(--gold)" />
+          <span>KYB Verified</span>
         </div>
       </div>
     </motion.div>

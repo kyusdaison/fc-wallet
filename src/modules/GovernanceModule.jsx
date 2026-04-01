@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { ChevronLeft, Vote, CheckCircle2, XCircle, Clock, TrendingUp, Users, Zap, Shield, Heart, Landmark, BarChart3 } from 'lucide-react';
 import { GOVERNANCE_PROPOSALS, GOVERNANCE_STATS } from '../data/mockData';
@@ -45,7 +44,7 @@ const GovernanceModule = ({ onClose }) => {
     const myVote = votes[p.id];
 
     return (
-      <motion.div key="gov-detail" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="module-content gov-shell" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <motion.div key="gov-detail" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content gov-shell module-stack-lg">
         <button type="button" className="identity-back-link" onClick={() => setSelectedProposal(null)}>
           <ChevronLeft size={20} strokeWidth={2.5} />
           Back to Proposals
@@ -139,7 +138,7 @@ const GovernanceModule = ({ onClose }) => {
 
   // List view
   return (
-    <motion.div key="governance" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="module-content gov-shell" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <motion.div key="governance" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content gov-shell module-stack-lg">
       <button type="button" className="identity-back-link" onClick={onClose}>
         <ChevronLeft size={20} strokeWidth={2.5} />
         Back to Services

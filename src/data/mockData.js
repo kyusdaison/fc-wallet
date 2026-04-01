@@ -59,10 +59,10 @@ export const CITIZEN_ALERTS = [
 ];
 
 export const CITIZEN_CHAT_CONTACTS = [
-  { id: 'c1', name: 'Alexander Chen', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100&h=100', status: 'L3 Verified', lastMsg: 'Payment Received', lastMsgType: 'payment', time: '10:42 AM', unread: 1 },
-  { id: 'c2', name: 'Sarah Williams', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100', status: 'L2 Verified', lastMsg: "Let's split the dinner bill.", lastMsgType: 'text', time: 'Yesterday', unread: 0 },
-  { id: 'c3', name: 'Marcus Rivera', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100&h=100', status: 'L3 Verified', lastMsg: 'Sent you 500 FCUSD', lastMsgType: 'payment', time: 'Yesterday', unread: 2 },
-  { id: 'c4', name: 'Elena Vasquez', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100&h=100', status: 'L1 Verified', lastMsg: 'Can you sign the multi-sig?', lastMsgType: 'text', time: 'Mon', unread: 0 },
+  { id: 'c1', name: 'Alexander Chen', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100&h=100', status: 'L3 Verified', lastMsg: 'Payment Received', lastMsgType: 'payment', time: '10:42 AM', unread: 1, tag: 'work', pinned: true },
+  { id: 'c2', name: 'Sarah Williams', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100', status: 'L2 Verified', lastMsg: "Let's split the dinner bill.", lastMsgType: 'text', time: 'Yesterday', unread: 0, tag: 'personal' },
+  { id: 'c3', name: 'Marcus Rivera', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100&h=100', status: 'L3 Verified', lastMsg: 'Sent you 500 FCUSD', lastMsgType: 'payment', time: 'Yesterday', unread: 2, tag: 'work' },
+  { id: 'c4', name: 'Elena Vasquez', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100&h=100', status: 'L1 Verified', lastMsg: 'Can you sign the multi-sig?', lastMsgType: 'text', time: 'Mon', unread: 0, tag: 'gov' },
 ];
 
 export const CITIZEN_PORTFOLIO = {

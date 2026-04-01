@@ -42,10 +42,6 @@ export const useAppStore = create((set) => ({
   showOnboarding: false,
   setShowOnboarding: (show) => set({ showOnboarding: show }),
 
-  // Contextual Modals
-  showContextModal: false,
-  setShowContextModal: (show) => set({ showContextModal: show }),
-
   // Selected items (full-screen overlays)
   selectedMultiSig: null,
   setSelectedMultiSig: (sig) => set({ selectedMultiSig: sig }),

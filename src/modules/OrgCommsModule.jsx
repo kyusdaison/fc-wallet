@@ -7,14 +7,20 @@ import {
   Building2,
   CheckCircle2,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   Clock,
   FileText,
   Lock,
   MessageSquare,
+  Plus,
   Search,
+  Server,
   Shield,
   ShieldCheck,
+  Sparkles,
+  Users,
+  Zap,
 } from 'lucide-react';
 import { ORG_CHAT_CONTACTS, ORG_APPROVALS, ORG_ALERTS, ORG_DIRECTORY } from '../data/mockData';
 /* oc-* styles in index.css */
@@ -84,9 +90,9 @@ const EnterpriseChatTab = () => {
   return (
     <motion.div
       key="chats"
-      initial={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+      exit={{ opacity: 0, x: -16 }}
       className="oc-tab-content"
     >
       {/* Search */}
@@ -153,9 +159,10 @@ const EnterpriseChatTab = () => {
               </div>
             ))
           ) : (
-            <div className="oc-empty">
-              <MessageSquare size={28} color="var(--text-tertiary)" />
-              <span>No channels found</span>
+            <div className="empty-state">
+              <div className="empty-state-icon"><MessageSquare size={22} /></div>
+              <div className="empty-state-title">No channels found</div>
+              <div className="empty-state-copy">Try a different search term or start a new conversation.</div>
             </div>
           )}
         </div>
@@ -196,9 +203,9 @@ const ApprovalsQueueTab = () => {
   return (
     <motion.div
       key="approvals"
-      initial={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+      exit={{ opacity: 0, x: -16 }}
       className="oc-tab-content"
     >
       <div className="oc-filter-row">
@@ -369,9 +376,9 @@ const EnterpriseAlertsTab = () => {
   return (
     <motion.div
       key="alerts"
-      initial={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+      exit={{ opacity: 0, x: -16 }}
       className="oc-tab-content"
     >
       <div className="oc-filter-row">
@@ -480,9 +487,9 @@ const EnterpriseContactsTab = () => {
   return (
     <motion.div
       key="contacts"
-      initial={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+      exit={{ opacity: 0, x: -16 }}
       className="oc-tab-content"
     >
       <div className="oc-search">
@@ -533,9 +540,10 @@ const EnterpriseContactsTab = () => {
               </div>
             ))
           ) : (
-            <div className="oc-empty">
-              <Search size={28} color="var(--text-tertiary)" />
-              <span>No contacts found</span>
+            <div className="empty-state">
+              <div className="empty-state-icon"><Search size={22} /></div>
+              <div className="empty-state-title">No contacts found</div>
+              <div className="empty-state-copy">Adjust your filters or search for a different name or entity ID.</div>
             </div>
           )}
         </div>
@@ -568,20 +576,60 @@ const OrgCommsModule = ({ initialTab = 'chats' }) => {
 
   return (
     <motion.div
-      className="oc-page"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      className="module-content module-stack-sm oc-page"
+      initial={{ opacity: 0, x: 16 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -16 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
-      {/* Header */}
-      <div className="oc-header">
-        <div className="oc-header-left">
-          <div className="oc-header-title">Enterprise Comms</div>
-          <div className="oc-header-sub">
-            <Lock size={10} />
-            Encrypted channels · NexaCorp Limited
+      {/* ── 1. Gold Glass Hero Card ── */}
+      <div className="og-hero">
+        <div className="og-hero-glow" />
+        <div className="og-hero-top">
+          <div>
+            <div className="og-hero-kicker">ENTERPRISE RELAY</div>
+            <div className="og-hero-title">Comms</div>
+          </div>
+          <div className="og-hero-badge">
+            <div className="og-hero-pulse" />
+            <Lock size={11} />
+            Encrypted
           </div>
         </div>
+        <div className="og-hero-stats">
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{ORG_CHAT_CONTACTS.length}</span>
+            <span className="og-stat-label">Channels</span>
+          </div>
+          <div className="og-hero-stat-divider" />
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{pendingCount}</span>
+            <span className="og-stat-label">Pending</span>
+          </div>
+          <div className="og-hero-stat-divider" />
+          <div className="og-hero-stat">
+            <span className="og-stat-value">{unreadAlerts}</span>
+            <span className="og-stat-label">Alerts</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 2. Quick Actions ── */}
+      <div className="home-action-grid">
+        {[
+          { id: 'new', title: 'New Channel', subtitle: 'Start thread', icon: <Plus size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary' },
+          { id: 'approve', title: 'Approve', subtitle: 'Sign queue', icon: <CheckCircle2 size={20} color="var(--gold)" />, iconClass: 'cm-icon-gold', toneClass: 'tone-gold', emphasis: 'primary' },
+          { id: 'broadcast', title: 'Broadcast', subtitle: 'All entities', icon: <Zap size={20} color="#8b5cf6" />, iconClass: 'cm-icon-purple', toneClass: 'tone-purple', emphasis: 'secondary' },
+          { id: 'directory', title: 'Directory', subtitle: 'Entity list', icon: <Users size={20} color="var(--text-dark)" />, iconClass: 'cm-icon-slate', toneClass: 'tone-slate', emphasis: 'secondary' },
+        ].map((a) => (
+          <button key={a.id} type="button" className={`home-action-btn ${a.emphasis} ${a.toneClass}`} onClick={() => { if (a.id === 'approve') setActiveTab('approvals'); if (a.id === 'directory') setActiveTab('contacts'); }}>
+            <div className={`icon-wrap ${a.iconClass}`}>{a.icon}</div>
+            <div className="home-action-copy">
+              <span className="home-action-title">{a.title}</span>
+              <span className="home-action-subtitle">{a.subtitle}</span>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* Tab Bar */}
@@ -605,6 +653,24 @@ const OrgCommsModule = ({ initialTab = 'chats' }) => {
         <AnimatePresence mode="wait">
           {tabs.find((t) => t.id === activeTab)?.component}
         </AnimatePresence>
+      </div>
+
+      {/* ── 5. Footer Stats ── */}
+      <div className="cm-net-stats">
+        <div className="cm-net-stat">
+          <Lock size={12} color="var(--gold)" />
+          <span>E2E Encrypted</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <Building2 size={12} color="var(--gold)" />
+          <span>{ORG_CHAT_CONTACTS.length} Entities</span>
+        </div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <ShieldCheck size={12} color="var(--gold)" />
+          <span>Multi-Sig</span>
+        </div>
       </div>
     </motion.div>
   );
