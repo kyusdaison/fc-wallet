@@ -5218,6 +5218,136 @@ html, body {
   flex-shrink: 0;
 }
 
+/* ── Premium Sovereign ID Card (idc-*) ── */
+.idc-card {
+  position: relative; overflow: hidden; border-radius: 20px;
+  padding: 14px 16px 0;
+  border: 1px solid rgba(212,175,55,0.18);
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(212,175,55,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(74,143,231,0.06) 0%, transparent 50%),
+    linear-gradient(160deg, rgba(18,22,34,0.98) 0%, rgba(10,14,22,0.99) 100%);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.idc-glow-tl {
+  position: absolute; top: -50px; left: -30px; width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.idc-glow-br {
+  position: absolute; bottom: -40px; right: -40px; width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(74,143,231,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.idc-holo-line {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 20%, rgba(74,143,231,0.4) 50%, rgba(139,92,246,0.4) 80%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Top bar */
+.idc-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; position: relative; z-index: 2;
+}
+.idc-issuer {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 8.5px; font-weight: 800; letter-spacing: 0.14em;
+  color: var(--gold); text-transform: uppercase;
+}
+.idc-chip-badge {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  padding: 2px 7px; border-radius: 6px;
+}
+
+/* Body */
+.idc-body {
+  display: flex; gap: 14px; align-items: flex-start;
+  position: relative; z-index: 2;
+}
+.idc-photo-wrap {
+  position: relative; flex-shrink: 0;
+}
+.idc-photo {
+  width: 70px; height: 88px; border-radius: 12px; object-fit: cover;
+  border: 2px solid rgba(212,175,55,0.25);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.idc-photo-ring {
+  position: absolute; inset: -3px; border-radius: 14px;
+  border: 1.5px solid rgba(212,175,55,0.12);
+  pointer-events: none;
+}
+.idc-photo-verified {
+  position: absolute; bottom: -3px; right: -3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #10b981; border: 2px solid rgba(10,14,22,0.9);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 8px rgba(16,185,129,0.4);
+}
+
+/* Info */
+.idc-info { flex: 1; min-width: 0; padding-top: 2px; }
+.idc-name {
+  font-size: 17px; font-weight: 900; color: #f8fafc;
+  letter-spacing: -0.03em; line-height: 1.15;
+}
+.idc-did {
+  margin-top: 3px; font-size: 10.5px; font-weight: 600;
+  color: #6b7a94; font-family: var(--font-mono); letter-spacing: 0.02em;
+}
+.idc-tags {
+  margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px;
+}
+.idc-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 9.5px; font-weight: 700; padding: 2.5px 7px;
+  border-radius: 6px; white-space: nowrap;
+}
+.idc-tag.blue {
+  color: #93c5fd; background: rgba(74,143,231,0.10); border: 1px solid rgba(74,143,231,0.12);
+}
+.idc-tag.gold {
+  color: #f5d46b; background: rgba(212,175,55,0.10); border: 1px solid rgba(212,175,55,0.12);
+}
+.idc-tag.green {
+  color: #6ee7b7; background: rgba(16,185,129,0.10); border: 1px solid rgba(16,185,129,0.12);
+}
+
+/* Trust bar */
+.idc-trust-bar {
+  margin-top: 12px; height: 2px; border-radius: 2px;
+  background: rgba(255,255,255,0.05); overflow: hidden;
+}
+.idc-trust-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold), #f5d46b);
+  box-shadow: 0 0 8px rgba(212,175,55,0.3);
+}
+
+/* Stats */
+.idc-stats {
+  display: flex; align-items: center; justify-content: center;
+  margin: 10px -16px 0; padding: 10px 0;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-radius: 0 0 20px 20px;
+}
+.idc-stat { flex: 1; text-align: center; }
+.idc-stat-value {
+  display: block; font-size: 13px; font-weight: 800; color: #e2e8f0;
+  letter-spacing: -0.02em;
+}
+.idc-stat-label {
+  display: block; font-size: 8.5px; font-weight: 700; color: #5a657a;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1px;
+}
+.idc-stat-divider {
+  width: 1px; height: 22px; background: rgba(255,255,255,0.05); flex-shrink: 0;
+}
+
 /* --- Compact Action Strip --- */
 .id-action-strip {
   display: flex;

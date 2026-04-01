@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1774858967265,
+  "lastScanned": 1775006298988,
   "projectRoot": "/Users/kyusdaison/FC Wallet",
   "techStack": {
     "languages": [
@@ -39,17 +39,17 @@
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
     "scripts": {
-      "dev": "vite",
+      "dev": "vite --host 127.0.0.1 --port 4173",
       "build": "vite build",
       "lint": "eslint .",
-      "preview": "vite preview"
+      "preview": "vite preview --host 127.0.0.1 --port 4174"
     }
   },
   "conventions": {
     "namingStyle": null,
     "importStyle": null,
     "testPattern": null,
-    "fileOrganization": null
+    "fileOrganization": "type-based"
   },
   "structure": {
     "isMonorepo": false,
@@ -57,6 +57,7 @@
     "mainDirectories": [
       "docs",
       "public",
+      "scripts",
       "src"
     ],
     "gitBranches": null
@@ -67,7 +68,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 4,
-      "lastAccessed": 1774858967223,
+      "lastAccessed": 1775006298973,
       "keyFiles": [
         "favicon.svg",
         "icons.svg",
@@ -78,39 +79,46 @@
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 5,
-      "lastAccessed": 1774858967225,
+      "fileCount": 6,
+      "lastAccessed": 1775006298974,
       "keyFiles": [
         "FC_Wallet_Design_Framework_Proposal_CN.md",
+        "design-review-2026-03-31.md",
         "fc-wallet-functional-summary-and-proposal.md",
         "fc-wallet-prd-notes.md",
-        "future-citizen-chain-briefing-notes.md",
-        "future-citizen-wallet-blueprint-notes.md"
+        "future-citizen-chain-briefing-notes.md"
       ]
     },
     "output": {
       "path": "output",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1774858967226,
+      "lastAccessed": 1775006298977,
       "keyFiles": []
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 3,
-      "lastAccessed": 1774858967238,
+      "lastAccessed": 1775006298977,
       "keyFiles": [
         "favicon.svg",
         "icons.svg",
         "lion_logo.png"
       ]
     },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 0,
+      "lastAccessed": 1775006298977,
+      "keyFiles": []
+    },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 4,
-      "lastAccessed": 1774858967239,
+      "lastAccessed": 1775006298977,
       "keyFiles": [
         "App.css",
         "App.jsx",
@@ -122,66 +130,61 @@
       "path": "tmp",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1774858967242,
+      "lastAccessed": 1775006298977,
       "keyFiles": []
     },
     "dist/assets": {
       "path": "dist/assets",
       "purpose": "Static assets",
       "fileCount": 2,
-      "lastAccessed": 1774858967242,
+      "lastAccessed": 1775006298978,
       "keyFiles": [
-        "index-C5JyGdB8.js",
-        "index-Cx3xUFx6.css"
+        "index-C-YoBdQe.js",
+        "index-CzgwCpFR.css"
       ]
     },
     "src/assets": {
       "path": "src/assets",
       "purpose": "Static assets",
       "fileCount": 3,
-      "lastAccessed": 1774858967245,
+      "lastAccessed": 1775006298978,
       "keyFiles": [
         "hero.png",
         "react.svg",
         "vite.svg"
       ]
     },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 8,
+      "lastAccessed": 1775006298978,
+      "keyFiles": [
+        "AssetDetailSheet.jsx",
+        "BridgeSheet.jsx",
+        "EmptyStates.jsx"
+      ]
+    },
+    "src/data": {
+      "path": "src/data",
+      "purpose": "Data files",
+      "fileCount": 1,
+      "lastAccessed": 1775006298979,
+      "keyFiles": [
+        "mockData.js"
+      ]
+    },
     "tmp/docs": {
       "path": "tmp/docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1774858967245,
+      "lastAccessed": 1775006298979,
       "keyFiles": [
         "FC_Wallet_Design_Framework_Proposal_CN.docx.png",
         "fc-wallet-ui-concept.html.png"
       ]
     }
   },
-  "hotPaths": [
-    {
-      "path": "src/App.jsx",
-      "accessCount": 342,
-      "lastAccessed": 1774876939825,
-      "type": "file"
-    },
-    {
-      "path": "src/index.css",
-      "accessCount": 138,
-      "lastAccessed": 1774866101684,
-      "type": "file"
-    },
-    {
-      "path": "src",
-      "accessCount": 2,
-      "lastAccessed": 1774864859195,
-      "type": "directory"
-    },
-    {
-      "path": "src/App.css",
-      "accessCount": 1,
-      "lastAccessed": 1774859026572,
-      "type": "file"
-    }
-  ],
+  "hotPaths": [],
   "userDirectives": []
 }

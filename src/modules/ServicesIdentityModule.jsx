@@ -386,58 +386,76 @@ const IdentityModule = ({ onOpenZkp }) => {
 
   // Main Identity View
   return (
-    <motion.div key="identity" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content identity-shell module-stack">
+    <motion.div key="identity" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="module-content identity-shell module-stack-sm">
 
-      {/* === Sovereign ID Card === */}
-      <div className="id-card">
-        <div className="id-card-glow"></div>
-        <div className="id-card-header">
-          <div className="id-card-issuer">
-            <ShieldCheck size={12} color="var(--gold)" />
-            <span>FUTURE CITIZEN AUTHORITY</span>
+      {/* ── 1. Premium Sovereign ID Card ── */}
+      <div className="idc-card">
+        <div className="idc-glow-tl" />
+        <div className="idc-glow-br" />
+        <div className="idc-holo-line" />
+
+        {/* Top bar */}
+        <div className="idc-top">
+          <div className="idc-issuer">
+            <ShieldCheck size={11} color="var(--gold)" />
+            FUTURE CITIZEN AUTHORITY
           </div>
-          <div className="id-card-trust">
-            <span className="id-card-trust-dot"></span>
-            L3
+          <div className="idc-chip-badge">
+            <Wifi size={9} />
+            <span>NFC</span>
           </div>
         </div>
 
-        <div className="id-card-body">
-          <div className="id-card-photo-wrap">
-            <img src={CITIZEN_PROFILE.avatar} alt={CITIZEN_PROFILE.name} className="id-card-photo" />
-            <div className="id-card-photo-badge">
-              <CheckCircle2 size={10} color="var(--green)" strokeWidth={3} />
+        {/* Body: photo + info */}
+        <div className="idc-body">
+          <div className="idc-photo-wrap">
+            <img src={CITIZEN_PROFILE.avatar} alt={CITIZEN_PROFILE.name} className="idc-photo" />
+            <div className="idc-photo-ring" />
+            <div className="idc-photo-verified">
+              <CheckCircle2 size={10} color="#fff" strokeWidth={3} />
             </div>
           </div>
-          <div className="id-card-info">
-            <div className="id-card-name">{CITIZEN_PROFILE.name}</div>
-            <div className="id-card-did">{CITIZEN_PROFILE.did}</div>
-            <div className="id-card-meta-row">
-              <span className="id-card-meta"><Fingerprint size={11} /> Biometric Active</span>
-              <span className="id-card-meta"><Shield size={11} /> {verifiedCount} Docs</span>
+          <div className="idc-info">
+            <div className="idc-name">{CITIZEN_PROFILE.name}</div>
+            <div className="idc-did">{CITIZEN_PROFILE.did}</div>
+            <div className="idc-tags">
+              <span className="idc-tag blue"><Fingerprint size={10} /> Biometric</span>
+              <span className="idc-tag gold"><Shield size={10} /> L3 Verified</span>
+              <span className="idc-tag green"><CheckCircle2 size={10} /> {verifiedCount} Docs</span>
             </div>
           </div>
         </div>
 
-        <div className="id-card-footer">
-          <div className="id-card-stat">
-            <span>Trust</span>
-            <strong>{CITIZEN_PROFILE.trustLevel}</strong>
+        {/* Trust level accent bar */}
+        <div className="idc-trust-bar">
+          <div className="idc-trust-fill" style={{ width: `${(CITIZEN_PROFILE.trustLevel / 5) * 100}%` }} />
+        </div>
+
+        {/* Stats row */}
+        <div className="idc-stats">
+          <div className="idc-stat">
+            <span className="idc-stat-value">{CITIZEN_PROFILE.trustLevel}</span>
+            <span className="idc-stat-label">Trust</span>
           </div>
-          <div className="id-card-stat-divider"></div>
-          <div className="id-card-stat">
-            <span>Fields</span>
-            <strong>{protectedFieldCount} protected</strong>
+          <div className="idc-stat-divider" />
+          <div className="idc-stat">
+            <span className="idc-stat-value">{protectedFieldCount}</span>
+            <span className="idc-stat-label">Fields</span>
           </div>
-          <div className="id-card-stat-divider"></div>
-          <div className="id-card-stat">
-            <span>Biometric</span>
-            <strong>{verificationHistory[0].time}</strong>
+          <div className="idc-stat-divider" />
+          <div className="idc-stat">
+            <span className="idc-stat-value">{verifiedCount}/{documents.length}</span>
+            <span className="idc-stat-label">Verified</span>
+          </div>
+          <div className="idc-stat-divider" />
+          <div className="idc-stat">
+            <span className="idc-stat-value">Active</span>
+            <span className="idc-stat-label">Biometric</span>
           </div>
         </div>
       </div>
 
-      {/* === Auth Request (compact) === */}
+      {/* ── 2. Auth Request (glass row) ── */}
       <button type="button" className="identity-auth-banner compact" onClick={() => onOpenZkp({ id: 'zkp-1', entity: 'MetaAuth Protocol' })}>
         <div className="identity-auth-icon compact">
           <ShieldCheck size={18} color="#93c5fd" />
@@ -449,26 +467,39 @@ const IdentityModule = ({ onOpenZkp }) => {
         <div className="identity-auth-status">Review</div>
       </button>
 
-      {/* === Quick Actions (compact) === */}
-      <div className="id-action-strip">
-        <button type="button" className="id-action-chip" onClick={() => onOpenZkp({ id: 'zkp-1', entity: 'Verification Relay' })}>
-          <Fingerprint size={16} color="#93c5fd" />
-          Verify
+      {/* ── 3. Quick Actions (2×2 grid) ── */}
+      <div className="home-action-grid">
+        <button type="button" className="home-action-btn primary tone-blue" onClick={() => onOpenZkp({ id: 'zkp-1', entity: 'Verification Relay' })}>
+          <div className="icon-wrap cm-icon-blue"><Fingerprint size={20} color="var(--blue)" /></div>
+          <div className="home-action-copy">
+            <span className="home-action-title">Verify</span>
+            <span className="home-action-subtitle">ZKP proof</span>
+          </div>
         </button>
-        <button type="button" className="id-action-chip" onClick={() => setIdentityTab('personal')}>
-          <QrCode size={16} color="#c4b5fd" />
-          Share
+        <button type="button" className="home-action-btn primary tone-purple" onClick={() => setIdentityTab('personal')}>
+          <div className="icon-wrap cm-icon-purple"><QrCode size={20} color="#8b5cf6" /></div>
+          <div className="home-action-copy">
+            <span className="home-action-title">Share</span>
+            <span className="home-action-subtitle">Selective disclosure</span>
+          </div>
         </button>
-        <button type="button" className="id-action-chip" onClick={() => setIdentityTab('documents')}>
-          <Scan size={16} color="#6ee7b7" />
-          Scan
+        <button type="button" className="home-action-btn secondary tone-green" onClick={() => setIdentityTab('documents')}>
+          <div className="icon-wrap cm-icon-green"><Scan size={20} color="#10b981" /></div>
+          <div className="home-action-copy">
+            <span className="home-action-title">Scan</span>
+            <span className="home-action-subtitle">Import doc</span>
+          </div>
         </button>
-        <button type="button" className="id-action-chip" onClick={() => setIdentityTab('documents')}>
-          <Upload size={16} color="#f5d46b" />
-          Add
+        <button type="button" className="home-action-btn secondary tone-gold" onClick={() => setIdentityTab('documents')}>
+          <div className="icon-wrap cm-icon-gold"><Upload size={20} color="var(--gold)" /></div>
+          <div className="home-action-copy">
+            <span className="home-action-title">Add</span>
+            <span className="home-action-subtitle">New credential</span>
+          </div>
         </button>
       </div>
 
+      {/* ── 4. Tab bar ── */}
       <div className="identity-tab-row">
         {[
           { key: 'documents', label: 'Documents' },
@@ -481,6 +512,7 @@ const IdentityModule = ({ onOpenZkp }) => {
         ))}
       </div>
 
+      {/* ── 5. Tab content ── */}
       {identityTab === 'documents' && (
         <div className="identity-section-shell compact">
           <div className="identity-section-head compact">
@@ -612,15 +644,22 @@ const IdentityModule = ({ onOpenZkp }) => {
         </div>
       )}
 
-      <div className="identity-credential-card compact">
-        <div className="identity-credential-icon compact">
-          <Landmark size={16} color="#93c5fd" />
+      {/* ── 6. Footer Stats ── */}
+      <div className="cm-net-stats">
+        <div className="cm-net-stat">
+          <ShieldCheck size={12} color="#10b981" />
+          <span>KYC L3</span>
         </div>
-        <div className="identity-credential-copy">
-          <div className="identity-credential-title compact">National KYC Level 3</div>
-          <div className="identity-credential-subtitle">FCA Core Auth</div>
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <Fingerprint size={12} color="var(--blue)" />
+          <span>Biometric Live</span>
         </div>
-        <CheckCircle2 size={18} color="var(--green)" />
+        <div className="cm-net-divider" />
+        <div className="cm-net-stat">
+          <Lock size={12} color="var(--gold)" />
+          <span>ZKP Ready</span>
+        </div>
       </div>
     </motion.div>
   );
